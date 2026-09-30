@@ -1,5 +1,6 @@
 # cose di lavoro, fuori dal sito
 .playwright-cli/
 .impeccable/
+PRODUCT.md
 .axe-tmp.js
 __pycache__/

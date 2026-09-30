@@ -4,6 +4,8 @@ Codice di Emanuele Parmegiani.
 
 Proposta di sito nuovo per [parmax.com](https://parmax.com): cambia solo quello che si vede. Prodotti, prezzi, disponibilità e cassa restano quelli del negozio Shopify di oggi.
 
+È un'anteprima: le pagine chiedono a Google di non metterle nei risultati (`noindex`).
+
 ## Guardarlo
 
 Dalla cartella del sito:
@@ -21,7 +23,6 @@ Sito statico senza build.
 - `assets/js/prodotti.js`: prodotti e recensioni, **generato**. Non si modifica a mano.
 - `assets/js/parmax.js`: tutto il comportamento (menu, ricerca, carrello, elenchi con filtri, scheda).
 - `assets/css/parmax.css`: lo stile, con le due versioni sugli stessi componenti.
-- `PRODUCT.md`: per chi è il sito, cosa si può e non si può fare, da dove vengono i dati.
 
 Cosa arriva dal negozio vero:
 
