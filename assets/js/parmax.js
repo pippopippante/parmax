@@ -925,6 +925,8 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
         })
         .join("");
     const rec = D.recensioni || { elenco: [] };
+    /* in home le prime sei, nell'ordine in cui arrivano (per data, non scelte): le altre con un tocco */
+    const REC_SUBITO = 6;
     const stelle = (n) => `<span class="stelle" role="img" aria-label="${n} stelle su 5">${[1, 2, 3, 4, 5].map((k) => `<svg class="ico${k <= n ? " on" : ""}" aria-hidden="true"><use href="#i-star"></use></svg>`).join("")}</span>`;
 
     main.innerHTML = `
@@ -964,13 +966,24 @@ ${
   </div>
   <ul class="recensioni__l">${rec.elenco
     .map(
-      (r) => `<li class="rec${r.testo ? "" : " rec--solo"}">${stelle(r.stelle)}<p class="rec__chi"><strong>${esc(r.nome)}</strong> · <time datetime="${r.data}">${data(r.data)}</time></p>${r.testo ? `<p class="rec__t">${esc(r.testo).replace(/\n/g, "<br>")}</p>` : `<p class="rec__t rec__t--vuoto">Solo il voto, senza testo.</p>`}</li>`
+      (r, i) => `<li class="rec${r.testo ? "" : " rec--solo"}"${i >= REC_SUBITO ? " hidden" : ""}>${stelle(r.stelle)}<p class="rec__chi"><strong>${esc(r.nome)}</strong> · <time datetime="${r.data}">${data(r.data)}</time></p>${r.testo ? `<p class="rec__t">${esc(r.testo).replace(/\n/g, "<br>")}</p>` : `<p class="rec__t rec__t--vuoto">Solo il voto, senza testo.</p>`}</li>`
     )
     .join("")}</ul>
+  ${rec.elenco.length > REC_SUBITO ? `<p class="recensioni__piu"><button type="button" class="btn btn--linea" data-rec-tutte>Mostra tutte le ${rec.elenco.length} recensioni</button></p>` : ""}
   <p class="recensioni__nota">Le recensioni sono pubblicate su Google e raccolte dal servizio Trustindex, che verifica solo che vengano da Google: non sappiamo se chi scrive ha comprato da noi. Le mostriamo tutte, anche le meno positive. <a href="${rec.google}" target="_blank" rel="noopener">Leggile tutte su Google${NUOVA_SCHEDA}</a></p>
 </section>`
     : ""
 }`;
+    const tutte = $("[data-rec-tutte]", main);
+    if (tutte)
+      tutte.addEventListener("click", () => {
+        const nascoste = $$(".rec[hidden]", main);
+        nascoste.forEach((li) => (li.hidden = false));
+        tutte.parentElement.remove();
+        /* il fuoco va alla prima recensione comparsa: chi usa la tastiera o il lettore di schermo riparte da lì */
+        nascoste[0].tabIndex = -1;
+        nascoste[0].focus({ preventScroll: true });
+      });
   }
 
   /* hero "classica": le due foto di campagna del negozio (portano alle novità di donna e di uomo) e le quattro porte */
