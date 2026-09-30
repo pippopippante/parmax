@@ -1009,7 +1009,7 @@ ${recensioniHtml()}`;
   }
 
   /* Home delle tre versioni nuove: stessa ossatura, ognuna con la sua apertura e qualche sezione sua.
-     casa: il negozio L'Arca e il 1985; rivista: le campagne delle marche; notte: "The Fashion Place" (dalle gift card) */
+     casa: il negozio L'Arca e il 1985; notte: "The Fashion Place" (dalle gift card); rivista ha la sua, homeRivista */
   function mountHomeNuova() {
     const t = tema();
     const main = $("#main");
@@ -1063,13 +1063,7 @@ ${recensioniHtml()}`;
 </section>`;
       mezzo = banda + scelti;
     } else if (t === "rivista") {
-      const cop = camp[0];
-      apertura = `<section class="apri apri--rivista" aria-labelledby="t-hero">
-  ${cop ? `<a class="apri__cop" href="elenco.html?m=${cop.marca.slug}"><img src="${foto(cop.url, 1600)}" srcset="${srcset(cop.url, [800, 1200, 1600])}" sizes="100vw" alt="${esc(cop.marca.nome)}, la campagna" width="1600" height="500" fetchpriority="high"></a>` : ""}
-  <div class="apri__t"><h1 class="apri__h" id="t-hero">Le marche della stagione</h1>${cta}</div>
-</section>
-<p class="sommario wrap"><strong>In negozio</strong><span>${numero(MARCHE.length)} marche, ${numero(tot.donna)} capi donna, ${numero(tot.uomo)} uomo e l'outlet fino al −${MAX_OUTLET}%.</span></p>`;
-      mezzo = storie(camp.slice(1, 7)) + banda;
+      return homeRivista(main, tot, scelti);
     } else {
       apertura = `<section class="apri apri--notte" aria-labelledby="t-hero">
   <img class="apri__sfondo" src="${foto(N.foto.borse, 1600)}" srcset="${srcset(N.foto.borse, [800, 1200, 1600])}" sizes="100vw" alt="" width="1600" height="1120" fetchpriority="high">
@@ -1086,6 +1080,81 @@ ${mezzo}
   ${indice("Donna", "elenco.html?s=donna", cat("donna"))}
   ${indice("Uomo", "elenco.html?s=uomo", cat("uomo"))}
   ${indice("Marche", "marche.html", marcheTop(() => true, 14).map((m) => [m.nome, "elenco.html?m=" + m.slug, m.n]))}
+</section>
+${negoziHtml()}
+${recensioniHtml()}`;
+    initRecensioni(main);
+  }
+
+  /* Home della versione "rivista", impaginata come un giornale di moda. Solo foto del negozio, tutte dello
+     stesso studio (i capi indossati): la copertina, due servizi (Donna, Uomo) con le didascalie dei capi come
+     nei giornali, l'outlet e le marche scritte in grande. Le foto delle campagne delle marche non si usano:
+     sono piccole, di stagioni e stili diversi, col logo dentro. */
+  function homeRivista(main, tot, scelti) {
+    const recenti = (g) =>
+      modelli(P.filter((p) => p.n && p.g === g && p.i[1] && !p.b && INDOSSATI.has(p.c)).sort((a, b) => (a.d < b.d ? 1 : a.d > b.d ? -1 : 0))).map((x) => x[0]);
+    const usati = new Set();
+    /* n capi dalla lista, prima uno per marca e poi, se non bastano, anche della stessa marca */
+    const scegli = (lista, n) => {
+      const out = [];
+      const giro = (ok) => lista.forEach((p) => out.length < n && !usati.has(p.h) && !out.includes(p) && ok(p) && out.push(p));
+      giro((p) => !out.some((x) => x.m === p.m));
+      giro(() => true);
+      out.forEach((p) => usati.add(p.h));
+      return out;
+    };
+    const donna = recenti("donna");
+    const uomo = recenti("uomo");
+    const capospalla = (l) => l.filter((p) => ["capispalla", "giacche", "abiti"].includes(p.c)).concat(l);
+    const copertina = scegli(capospalla(donna), 1).concat(scegli(capospalla(uomo), 1));
+    const credito = (p, grande, cls) => `<a class="cred${cls || ""}" href="prodotto.html?p=${encodeURIComponent(p.h)}">
+  <span class="cred__img"><img src="${foto(p.i[1], grande ? 900 : 480)}" srcset="${srcset(p.i[1], [360, 480, 720, 900, 1067])}" sizes="${grande ? "(min-width:900px) 40vw, 100vw" : "(min-width:900px) 20vw, 50vw"}" alt="${esc(`${p.m} ${nomeCapo(p)}, indossato`)}" width="600" height="900" loading="lazy"></span>
+  <span class="cred__t"><span class="cred__m">${esc(p.m)}</span><span class="cred__n">${esc(nomeCapo(p))}</span>${prezzoHtml(p)}</span>
+</a>`;
+    const voce = (nome, href, n) => `<li><a href="${href}"><span>${esc(nome)}</span><span class="som__dot" aria-hidden="true"></span><span class="n">${n}</span></a></li>`;
+    const colonna = (g) => `<div class="som__col"><h2 class="som__g"><a href="elenco.html?s=${g}">${C.generi[g]}</a></h2><ul>${categorieDi(inSezione[g], g)
+      .sort((a, b) => b.n - a.n)
+      .slice(0, 5)
+      .map((x) => voce(x.nome, hrefCat(g, x.c), x.n))
+      .join("")}</ul></div>`;
+    /* "a, b e c" */
+    const elenca = (l) => esc(l.length > 1 ? l.slice(0, -1).join(", ") + " e " + l[l.length - 1] : l[0] || "");
+    const servizio = (g, verso) => {
+      const lista = scegli(g === "donna" ? donna : uomo, 5);
+      return lista.length < 5
+        ? ""
+        : `<section class="serv serv--${verso} wrap" aria-labelledby="t-${g}">
+  <div class="serv__head"><h2 class="h1" id="t-${g}">${C.generi[g]}</h2><p class="serv__sub">Appena arrivati da ${elenca(Array.from(new Set(lista.map((p) => p.m))))}.</p><a class="link-freccia" href="elenco.html?s=${g}">Tutti i ${numero(tot[g])} capi ${ico("right")}</a></div>
+  <div class="serv__g">${lista.map((p, i) => credito(p, i === 0)).join("")}</div>
+</section>`;
+    };
+
+    main.innerHTML = `
+<section class="apri apri--rivista" aria-labelledby="t-hero">
+  <div class="apri__foto">${copertina
+    .map(
+      (p, i) =>
+        `<a class="cop" href="prodotto.html?p=${encodeURIComponent(p.h)}"><img src="${foto(p.i[1], 720)}" srcset="${srcset(p.i[1], [480, 720, 900, 1067])}" sizes="(min-width:900px) 28vw, 50vw" alt="${esc(`${p.m} ${nomeCapo(p)}, indossato`)}" width="600" height="900"${i ? "" : ' fetchpriority="high"'}><span class="cop__cred"><strong>${esc(p.m)}</strong> ${esc(nomeCapo(p))}</span></a>`
+    )
+    .join("")}</div>
+  <div class="apri__t">
+    <h1 class="apri__h" id="t-hero">Le marche della stagione</h1>
+    <p class="apri__sub">Oltre 80 brand selezionati per uomo e donna, spediti dal nostro magazzino in 1-2 giorni lavorativi.</p>
+    <nav class="som" aria-label="Sommario">
+      <p class="som__h">Sommario</p>
+      <div class="som__cols">${colonna("donna")}${colonna("uomo")}</div>
+      <ul class="som__altro">${voce("Outlet", "elenco.html?s=outlet", "fino al −" + MAX_OUTLET + "%")}${voce("Marche", "marche.html", numero(MARCHE.length))}</ul>
+    </nav>
+  </div>
+</section>
+${servizio("donna", "sx")}
+${servizio("uomo", "dx")}
+${scelti}
+<section class="firme wrap" aria-labelledby="t-firme">
+  <div class="serv__head"><h2 class="h1" id="t-firme">Le marche</h2><a class="link-freccia" href="marche.html">Tutte le ${numero(MARCHE.length)} marche ${ico("right")}</a></div>
+  <p class="firme__l">${marcheTop(() => true, 14)
+    .map((m) => `<a href="elenco.html?m=${m.slug}">${esc(m.nome)}<sup>${m.n}</sup></a>`)
+    .join(" ")}</p>
 </section>
 ${negoziHtml()}
 ${recensioniHtml()}`;

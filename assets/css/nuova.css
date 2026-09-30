@@ -5,7 +5,7 @@
    angoli vivi, niente ombre sui riquadri. Colori e caratteri sono gettoni (--acc, --disp, --h-*) che ogni
    versione cambia in fondo al file, insieme all'apertura della home:
    - casa: il negozio L'Arca e il 1985, pietra chiara e verde scuro, Libre Caslon;
-   - rivista: le campagne delle marche, bianco e nero col rosso, Bodoni corsivo;
+   - rivista: impaginata come un giornale di moda, coi capi indossati del negozio, Bodoni e Figtree;
    - notte: "The Fashion Place" delle gift card, fondo scuro e oro, Italiana.
    Telefono < 760 px, tablet 760-1119 px, computer >= 1120 px (gli stessi punti di parmax.js).
    ========================================================================== */
@@ -373,21 +373,93 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
   .apri--casa .apri__t { padding: clamp(32px, 4.5vh, 64px) clamp(28px, 4vw, 72px); align-content: space-between; overflow: hidden; }
 }
 
-/* rivista: la campagna di una marca a tutta larghezza, sotto il titolo in corsivo */
-.apri--rivista .apri__cop { display: block; overflow: hidden; background: var(--tile); }
-.apri--rivista .apri__cop img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; object-position: 47% 50%; transform: scale(1.03); }
-/* scale(1.03): alcune foto delle campagne hanno un filo bianco sul bordo; il riquadro lo taglia */
-.apri--rivista .apri__t { display: grid; gap: 20px; max-width: var(--max); margin-inline: auto; padding: 22px var(--gut) 26px; }
-.apri--rivista .apri__h { font-size: clamp(46px, 6.2vw, 120px); line-height: 0.95; }
-@media (min-width: 760px) {
-  .apri--rivista .apri__cop img { aspect-ratio: 3.2 / 1; }
-  .apri--rivista .apri__t { display: flex; align-items: end; justify-content: space-between; gap: 40px; padding-top: 26px; padding-bottom: 30px; }
-  .apri--rivista .apri__cta { flex: none; }
+/* rivista: la copertina. Due capi appena arrivati, indossati e interi, con la didascalia; accanto il titolo
+   e il sommario (le categorie vere, coi puntini fino al numero come nell'indice di un giornale) */
+.apri--rivista { display: grid; gap: 28px; max-width: var(--max); margin-inline: auto; padding: 12px var(--gut) 0; }
+.apri--rivista .apri__foto { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cop { display: grid; gap: 8px; align-content: start; text-decoration: none; }
+.cop img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; background: var(--tile); }
+.cop__cred { font-size: 13px; color: var(--ink-2); line-height: 1.4; }
+.cop__cred strong { color: var(--ink); font-weight: 600; margin-right: 4px; }
+.cop:hover .cop__cred { text-decoration: underline; }
+.apri--rivista .apri__t { display: grid; gap: 20px; align-content: start; }
+.apri--rivista .apri__h { font-size: clamp(46px, 5vw, 100px); line-height: 0.96; letter-spacing: -0.015em; }
+.som { display: grid; gap: 14px; border-top: 1px solid var(--ink); padding-top: 12px; margin-top: 8px; }
+.som__h { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.som__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px 32px; }
+.som__g { font-family: var(--disp); font-size: 26px; font-weight: 400; line-height: 1.2; margin-bottom: 2px; }
+.som__g a { text-decoration: none; }
+.som__g a:hover { text-decoration: underline; }
+.som li a { display: flex; align-items: baseline; gap: 8px; min-height: 44px; padding-top: 10px; text-decoration: none; font-size: 15px; }
+.som__dot { flex: 1; min-width: 16px; border-bottom: 1px dotted var(--line-3); transform: translateY(-4px); }
+.som li a:hover span:first-child { text-decoration: underline; }
+.som .n { font-size: 14px; }
+.som__altro { border-top: 1px solid var(--line); padding-top: 4px; }
+.som__altro span:first-child { font-weight: 600; }
+@media (min-width: 900px) {
+  .apri--rivista { grid-template-columns: minmax(0, 1fr) auto; gap: clamp(32px, 4vw, 80px); padding-top: 24px; }
+  /* le due foto alte quanto lo schermo, meno la didascalia: si vedono intere nella prima schermata */
+  .apri--rivista .apri__foto { order: 2; --h: min(calc(100dvh - var(--hdr) - 88px), 880px, 42vw); gap: 10px; }
+  .cop img { height: var(--h); width: calc(var(--h) * 2 / 3); }
+  .som li a { min-height: 36px; padding-top: 6px; }
 }
-.sommario { display: grid; gap: 4px; padding-top: 18px; padding-bottom: 18px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
-.sommario strong { font-family: var(--disp); font-style: italic; font-weight: 600; font-size: 24px; color: var(--sale); }
-.sommario span { color: var(--ink-2); font-size: 17px; }
-@media (min-width: 760px) { .sommario { grid-template-columns: auto 1fr; gap: 32px; align-items: baseline; } }
+
+/* i servizi: una foto grande e quattro piccole, con la didascalia del capo sotto ognuna */
+.serv, .firme { padding-top: 88px; }
+.serv__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; border-top: 1px solid var(--ink); padding-top: 14px; margin-bottom: 24px; }
+@media (min-width: 900px) { .serv .serv__head { border-top: 1px solid var(--ink); padding-top: 14px; } }
+.serv__sub { flex-basis: 100%; order: 3; color: var(--ink-2); }
+.serv__g { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 10px; align-items: start; }
+.serv__g .cred:first-child { grid-column: 1 / -1; }
+.cred { display: grid; gap: 10px; text-decoration: none; }
+.cred__img { display: block; overflow: hidden; background: var(--tile); }
+.cred__img img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; transition: transform 0.9s var(--ease); }
+.cred__t { display: grid; gap: 2px; font-size: 15px; }
+.cred__m { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.cred__n { color: var(--ink-2); }
+.cred:hover .cred__n { text-decoration: underline; }
+@media (hover: hover) and (pointer: fine) { .cred:hover .cred__img img { transform: scale(1.02); } }
+/* tablet: la foto grande accanto alle quattro piccole, senza ancora il titolo a lato */
+@media (min-width: 600px) and (max-width: 899px) {
+  .serv__g { grid-template-columns: 2fr 1fr 1fr; gap: 28px 12px; }
+  .serv__g .cred:first-child { grid-column: 1; grid-row: 1 / 3; }
+  .serv--dx .serv__g { grid-template-columns: 1fr 1fr 2fr; }
+  .serv--dx .serv__g .cred:first-child { grid-column: 3; }
+}
+@media (min-width: 900px) {
+  .serv, .firme { padding-top: 128px; }
+  /* il servizio sta tutto in una schermata, come una doppia pagina: il titolo da una parte, la foto grande
+     e le quattro piccole dall'altra. --h è l'altezza di una foto piccola; la grande è alta quanto due piccole
+     con le loro didascalie (72 px), così sopra e sotto si allineano */
+  .serv { --h: clamp(200px, calc((100dvh - var(--hdr) - 64px - 24px) / 2 - 82px), 330px); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 clamp(32px, 4vw, 80px); align-items: start; }
+  .serv__head { display: grid; gap: 18px; align-content: start; justify-content: stretch; margin: 0; }
+  .serv__head .h1 { font-size: clamp(56px, 6vw, 120px); line-height: 0.95; }
+  .serv__head .link-freccia { justify-self: start; }
+  .serv__sub { order: 0; flex-basis: auto; max-width: 30ch; font-size: 18px; color: var(--ink-2); }
+  .serv--dx .serv__sub { justify-self: end; }
+  .serv__g { grid-template-columns: calc((2 * var(--h) + 106px) * 2 / 3) calc(var(--h) * 2 / 3) calc(var(--h) * 2 / 3); gap: 24px 12px; border-top: 1px solid var(--ink); padding-top: 16px; }
+  .serv__g .cred:first-child { grid-column: 1; grid-row: 1 / 3; }
+  .serv__g .cred__img img { height: var(--h); width: 100%; }
+  .serv__g .cred:first-child .cred__img img { height: calc(2 * var(--h) + 106px); }
+  .serv__g .cred__t { height: 72px; font-size: 15px; }
+  .serv__g .cred__n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .serv__g .prezzo { flex-wrap: nowrap; white-space: nowrap; }
+  /* il servizio uomo: titolo a destra, foto grande a destra */
+  .serv--dx { grid-template-columns: auto minmax(0, 1fr); }
+  .serv--dx .serv__head { grid-column: 2; grid-row: 1; justify-items: end; text-align: right; }
+  .serv--dx .serv__head .link-freccia { justify-self: end; }
+  .serv--dx .serv__g { grid-column: 1; grid-row: 1; grid-template-columns: calc(var(--h) * 2 / 3) calc(var(--h) * 2 / 3) calc((2 * var(--h) + 106px) * 2 / 3); }
+  .serv--dx .serv__g .cred:first-child { grid-column: 3; }
+  .cred__t { font-size: 16px; }
+  .firme .serv__head { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--ink); padding-top: 14px; margin-bottom: 24px; }
+}
+
+/* le marche scritte in grande, come i nomi degli stilisti in un giornale */
+.firme__l { font-family: var(--disp); font-size: clamp(28px, 3.6vw, 64px); line-height: 1.18; }
+.firme__l a { display: inline-block; margin-right: 0.45em; text-decoration: none; }
+.firme__l a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.12em; }
+/* il numero accanto al nome, in alto: spostato senza cambiare l'altezza della riga */
+.firme__l sup { position: relative; top: calc(clamp(28px, 3.6vw, 64px) * -0.5); vertical-align: baseline; font-family: var(--font); font-size: 13px; color: var(--ink-2); margin-left: 0.25em; line-height: 1; }
 
 /* notte: la parete delle borse del negozio a tutto schermo, il motto delle gift card sopra */
 .apri--notte { position: relative; height: calc(100dvh - var(--hdr)); min-height: 540px; max-height: 1040px; overflow: hidden; background: #0c0c0c; }
@@ -810,17 +882,19 @@ dialog.zoom { margin: 0; padding: 0; border: 0; width: 100vw; height: 100dvh; ma
   [data-tema="casa"] .nav__link { text-transform: none; letter-spacing: 0.01em; font-size: 15px; }
 }
 
-/* rivista: bianco e nero col rosso, Bodoni corsivo per i titoli e Figtree per il testo.
+/* rivista: bianco e nero, Bodoni per i titoli grandi, Figtree per il testo e per i titoletti delle sezioni;
+   il rosso solo per gli sconti. Il corsivo niente: su tutti i titoli era troppo.
    Contrasti: rosso 5,5:1 sulla pagina, testo secondario 6,9:1 */
 :root[data-tema="rivista"] {
   --bg: #fbfaf7; --bg-2: #f1efe9; --tile: #ebeae6;
   --ink: #111111; --ink-2: #57574f; --line: #e3e1db; --line-3: #8b8a84;
   --acc: #111111; --acc-ink: #ffffff; --acc-hover: #3a3a38; --sale: #c0231a; --focus: #111111;
   --font: "Figtree", system-ui, sans-serif; --disp: "Bodoni Moda", "Didot", Georgia, serif;
-  --h-style: italic; --h-track: -0.01em;
+  --h-track: -0.01em;
 }
+/* i titoletti delle sezioni (Novità, In outlet adesso...) come le rubriche di un giornale: maiuscolo piccolo */
+[data-tema="rivista"] .h2 { font-family: var(--font); font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.4; }
 [data-tema="rivista"] .hdr { border-bottom-color: var(--ink); }
-[data-tema="rivista"] .apri--rivista .apri__t { border-bottom: 0; }
 @media (min-width: 1120px) {
   :root[data-tema="rivista"] { --hdr: 84px; }
   [data-tema="rivista"] .hdr__logo img { width: 196px; }

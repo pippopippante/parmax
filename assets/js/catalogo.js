@@ -45,7 +45,7 @@ window.CATALOGO = {
       storia1985: "parmax-storia-1985-boutique-spoleto.jpg",
       borse: "parmax-storia-borse.jpg",
       /* foto delle campagne delle marche, caricate dal negozio nelle sue collezioni (1600×500).
-         Nell'ordine in cui le usa la versione "rivista" (la prima fa da copertina); "notte" usa quelle segnate scure. */
+         Le usa la versione "notte" (quelle segnate scure): sono piccole e di stili diversi, la "rivista" non le usa più. */
       campagne: [
         ["MaxMara Studio", "Parmax-abbigliamento-donna-MaxMara_Studio.jpg"],
         ["Liu Jo", "Parmax-abbigliamento-donna-Liu_Jo.jpg"],
