@@ -725,8 +725,10 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 @media (min-width: 760px) {
   .pdp { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 40px; padding-top: 12px; }
   .gal__track { margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; }
-  .gal__slide { flex-basis: 100%; }
-  .pdp__info { position: sticky; top: calc(var(--hdr) + 16px); }
+  /* la foto sta tutta nello schermo (anche su tablet sdraiato) e resta ferma mentre il testo scorre accanto;
+     se è il testo a essere più corto, resta fermo lui */
+  .gal__slide { flex-basis: 100%; max-height: calc(100dvh - var(--hdr) - 130px); }
+  .pdp__gal, .pdp__info { position: sticky; top: calc(var(--hdr) + 16px); align-self: start; }
 }
 @media (min-width: 1120px) {
   .pdp { grid-template-columns: minmax(0, 7fr) minmax(380px, 5fr); gap: 56px; }
