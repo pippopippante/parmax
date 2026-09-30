@@ -839,7 +839,7 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
 <div class="card__media">
   <img class="card__img" src="${foto(p.i[0], 480)}" srcset="${srcset(p.i[0], [240, 360, 480, 720])}" sizes="(min-width:1120px) 22vw, (min-width:760px) 30vw, 46vw" alt="${esc(alt)}" width="480" height="720" loading="${opz.subito ? "eager" : "lazy"}" decoding="async">
   ${p.i[1] ? `<img class="card__img2" src="${foto(p.i[1], 480)}" alt="" width="480" height="720" loading="lazy" decoding="async">` : ""}
-  ${prezzo(p).pct ? `<span class="card__badge">−${prezzo(p).pct}%</span>` : p.n && opz.novita !== false ? `<span class="card__badge card__badge--new">Novità</span>` : ""}
+  ${/* lo sconto si legge accanto al prezzo: sulla foto niente bollino doppio */ !prezzo(p).pct && p.n && opz.novita !== false ? `<span class="card__badge">Novità</span>` : ""}
 </div>
 <div class="card__b">
   <p class="card__m">${esc(p.m)}</p>

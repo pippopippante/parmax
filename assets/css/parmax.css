@@ -372,11 +372,11 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
   /* la seconda foto prende il posto della prima: fuse tutte e due si vedrebbero una sopra l'altra */
   .card:hover .card__media:has(.card__img2) .card__img { opacity: 0; }
 }
+/* sulla foto solo il bollino "Novità": lo sconto si legge accanto al prezzo */
 .card__badge {
-  position: absolute; left: 8px; top: 8px; padding: 3px 7px; font-size: 12px; font-weight: 700;
-  background: var(--sale); color: #fff; letter-spacing: 0.02em;
+  position: absolute; left: 8px; top: 8px; padding: 3px 7px; font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+  background: var(--bg); color: var(--ink); border: 1px solid var(--ink);
 }
-.card__badge--new { background: var(--bg); color: var(--ink); border: 1px solid var(--ink); font-weight: 600; }
 .card__b { padding-top: 10px; display: grid; gap: 3px; }
 .card__m { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card__n { font-size: 15px; font-weight: 400; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
