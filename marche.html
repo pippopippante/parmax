@@ -19,20 +19,25 @@
 <link rel="preconnect" href="https://cdn.shopify.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="assets/css/parmax.css">
+<link rel="stylesheet" href="assets/css/nuova.css">
 <script>
-/* versione da mostrare: ?tema=classica o ?tema=rinnovata, ricordata nel browser; carica solo il suo carattere */
+/* versione da mostrare: ?tema=classica, ?tema=rinnovata o ?tema=nuova, ricordata nel browser.
+   I due fogli di stile arrivano insieme e si spegne quello che non serve (la nuova ha il suo, le altre due
+   dividono parmax.css); il carattere si scarica solo per la versione scelta. */
 (function () {
-  var t, d = document.documentElement;
+  var t, d = document.documentElement, fogli = document.querySelectorAll('link[href^="assets/css/"]');
   try { t = new URLSearchParams(location.search).get("tema"); if (t) localStorage.setItem("parmax:tema", t); else t = localStorage.getItem("parmax:tema"); } catch (e) {}
-  t = t === "rinnovata" ? "rinnovata" : "classica";
+  t = t === "rinnovata" || t === "nuova" ? t : "classica";
   d.dataset.tema = t;
+  fogli[0].disabled = t === "nuova";
+  fogli[1].disabled = t !== "nuova";
   var l = document.createElement("link");
   l.rel = "stylesheet";
-  l.href = t === "rinnovata" ? "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" : "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Work+Sans:wght@400..700&display=swap";
+  l.href = "https://fonts.googleapis.com/css2?family=" + { classica: "Playfair+Display:wght@400;500&family=Work+Sans:wght@400..700", rinnovata: "Archivo:wdth,wght@62..125,400..900", nuova: "Jost:wght@300..600" }[t] + "&display=swap";
   document.head.appendChild(l);
 })();
 </script>
-<link rel="stylesheet" href="assets/css/parmax.css">
 </head>
 <body data-pagina="marche" data-sezione="marche">
 <main id="main"><noscript><p class="wrap caricamento">Per vedere i prodotti serve JavaScript attivo nel browser. Puoi chiamarci al +39 0743 225664 o scriverci a clienti@parmax.com.</p></noscript></main>

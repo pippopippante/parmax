@@ -12,7 +12,11 @@ Dalla cartella del sito:
 
     python -m http.server 8790
 
-poi nel browser `http://127.0.0.1:8790/`. Le versioni da mostrare sono due e si scelgono in fondo alla pagina ("Anteprima: Classica / Rinnovata") o dall'indirizzo, con `?tema=classica` e `?tema=rinnovata`.
+poi nel browser `http://127.0.0.1:8790/`. Le versioni da mostrare sono tre e si scelgono in fondo alla pagina ("Anteprima: Classica / Rinnovata / Nuova") o dall'indirizzo, con `?tema=classica`, `?tema=rinnovata` e `?tema=nuova`.
+
+- **Classica**: il marchio di oggi, bianco e nero.
+- **Rinnovata**: il cartellone delle marche in blu.
+- **Nuova**: libera dal sito di oggi. I vestiti si vedono indossati (la seconda foto che il negozio carica per ogni capo), un carattere solo (Jost), bianco e nero con il rosso solo per gli sconti.
 
 ## Com'è fatto
 
@@ -22,7 +26,8 @@ Sito statico senza build.
 - `assets/js/catalogo.js`: i dati del negozio scritti a mano (contatti, negozi, spedizione, sconti, categorie).
 - `assets/js/prodotti.js`: prodotti e recensioni, **generato**. Non si modifica a mano.
 - `assets/js/parmax.js`: tutto il comportamento (menu, ricerca, carrello, elenchi con filtri, scheda).
-- `assets/css/parmax.css`: lo stile, con le due versioni sugli stessi componenti.
+- `assets/css/parmax.css`: lo stile della classica e della rinnovata, sugli stessi componenti.
+- `assets/css/nuova.css`: lo stile della nuova, da solo (con la nuova `parmax.css` è spento).
 
 Cosa arriva dal negozio vero:
 
@@ -43,4 +48,4 @@ Con l'anteprima accesa:
     playwright-cli -s=parmax open about:blank
     playwright-cli -s=parmax --raw run-code --filename=strumenti/controlla.js
 
-Apre ogni pagina nelle due versioni a 320, 390, 820 e 1280 px e prova prezzi, scheda, carrello, ricerca e filtri. Deve rispondere `NESSUN PROBLEMA`.
+Apre ogni pagina nelle tre versioni a 320, 390, 820 e 1280 px e prova prezzi, scheda, carrello, ricerca e filtri. Deve rispondere `NESSUN PROBLEMA`.

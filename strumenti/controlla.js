@@ -4,7 +4,7 @@
        playwright-cli -s=parmax open about:blank
        playwright-cli -s=parmax --raw run-code --filename=strumenti/controlla.js
 
-   Apre ogni pagina nelle due versioni a 320, 390, 820 e 1280 px e controlla: errori, scorrimento
+   Apre ogni pagina nelle tre versioni a 320, 390, 820 e 1280 px e controlla: errori, scorrimento
    laterale, pagine vuote, accessibilità (axe-core, scaricato da cdnjs). Poi prova le cose che contano:
    prezzi, scheda prodotto letta dal negozio, carrello fino al link della cassa, ricerca, filtri. */
 async page => {
@@ -42,7 +42,7 @@ async page => {
   const pagine = ['index.html', 'elenco.html?s=donna', 'elenco.html?s=donna&c=capispalla', 'elenco.html?s=outlet', 'elenco.html?s=novita', 'elenco.html?q=jeans',
     'elenco.html?q=zzzzqq', 'prodotto.html?p=' + capo.h, 'prodotto.html?p=gift-card-parmax-fashion', 'prodotto.html?p=non-esiste', 'marche.html', 'info.html', 'chi-siamo.html', '404.html'];
   let aperte = 0;
-  for (const tema of ['classica', 'rinnovata']) {
+  for (const tema of ['classica', 'rinnovata', 'nuova']) {
     for (const w of [320, 390, 820, 1280]) {
       await page.setViewportSize({ width: w, height: w < 500 ? 664 : 900 });
       for (const u of pagine) {

@@ -42,6 +42,13 @@
   };
   const srcset = (path, larghezze) => larghezze.map((w) => foto(path, w) + " " + w + "w").join(", ");
 
+  /* Il negozio carica per ogni capo due foto: il capo da solo (fondo bianco) e il capo indossato (fondo grigio
+     da studio). Nella versione "nuova" le schede dei vestiti mostrano prima quella indossata; per scarpe, borse
+     e accessori anche la seconda foto è di solito il capo da solo, quindi lì resta l'ordine del negozio.
+     Restituisce [prima foto, seconda foto, la prima è quella indossata]. */
+  const INDOSSATI = new Set(["capispalla", "giacche", "maglie", "felpe", "camicie", "t-shirt", "top", "abiti", "completi", "tute", "gonne", "pantaloni", "jeans", "gilet", "bermuda"]);
+  const fotoScheda = (p) => (tema() === "nuova" && p.i[1] && INDOSSATI.has(p.c) ? [p.i[1], p.i[0], true] : [p.i[0], p.i[1], false]);
+
   /* WhatsApp col messaggio già iniziato (regola del metodo: "vi scrivo dal sito ...") */
   const wa = (testo) => "https://wa.me/" + N.waNum + "?text=" + encodeURIComponent(testo);
   const WA_SITO = "Buongiorno, vi scrivo dal sito Parmax";
@@ -311,7 +318,8 @@
   }
 
   /* ------------------------------------------------------------ tema */
-  /* Due versioni da mostrare al negozio: "classica" (stesso marchio) e "rinnovata".
+  /* Tre versioni da mostrare al negozio: "classica" (stesso marchio), "rinnovata" (il cartellone) e "nuova"
+     (libera dal sito di oggi: foto indossate, un carattere solo, assets/css/nuova.css).
      ponytail: interruttore solo per l'anteprima; scelta la versione, si toglie con l'altro set di colori. */
   const tema = () => document.documentElement.dataset.tema || "classica";
   function cambiaTema(t) {
@@ -607,6 +615,7 @@
       <span>Anteprima:</span>
       <button type="button" data-tema="classica" aria-pressed="${tema() === "classica"}">Classica</button>
       <button type="button" data-tema="rinnovata" aria-pressed="${tema() === "rinnovata"}">Rinnovata</button>
+      <button type="button" data-tema="nuova" aria-pressed="${tema() === "nuova"}">Nuova</button>
     </div>
   </div>
 </footer>
@@ -835,10 +844,12 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
           .map((z) => `<span${evid && evid.has(chiaveTaglia(p, z)) ? ' class="is-on"' : ""}>${esc(z)}</span>`)
           .join(" ")}</p>`
       : "";
+    /* "is-ritaglio": il capo da solo su fondo bianco, che nella versione nuova si fonde col grigio del riquadro */
+    const [f1, f2, indossata] = fotoScheda(p);
     return `
 <div class="card__media">
-  <img class="card__img" src="${foto(p.i[0], 480)}" srcset="${srcset(p.i[0], [240, 360, 480, 720])}" sizes="(min-width:1120px) 22vw, (min-width:760px) 30vw, 46vw" alt="${esc(alt)}" width="480" height="720" loading="${opz.subito ? "eager" : "lazy"}" decoding="async">
-  ${p.i[1] ? `<img class="card__img2" src="${foto(p.i[1], 480)}" alt="" width="480" height="720" loading="lazy" decoding="async">` : ""}
+  <img class="card__img${indossata ? "" : " is-ritaglio"}" src="${foto(f1, 480)}" srcset="${srcset(f1, [240, 360, 480, 720])}" sizes="(min-width:1120px) 22vw, (min-width:760px) 30vw, 46vw" alt="${esc(alt)}" width="480" height="720" loading="${opz.subito ? "eager" : "lazy"}" decoding="async">
+  ${f2 ? `<img class="card__img2${indossata ? " is-ritaglio" : ""}" src="${foto(f2, 480)}" alt="" width="480" height="720" loading="lazy" decoding="async">` : ""}
   ${/* lo sconto si legge accanto al prezzo: sulla foto niente bollino doppio */ !prezzo(p).pct && p.n && opz.novita !== false ? `<span class="card__badge">Novità</span>` : ""}
 </div>
 <div class="card__b">
@@ -905,12 +916,60 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
       .join("")}</ol></nav>`;
 
   /* ================================================================ HOME */
+  /* al massimo `max` capi della stessa marca, così una striscia non è tutta di una marca sola */
+  const perMarca = (gruppi, max) => {
+    const n = {};
+    return gruppi.filter((g) => (n[g[0].m] = (n[g[0].m] || 0) + 1) <= max);
+  };
+  const tessera = (p, href, x) => {
+    const [f, , indossata] = fotoScheda(p);
+    return `<a class="tessera" href="${href}"><span class="tessera__img"><img${indossata ? "" : ' class="is-ritaglio"'} src="${foto(f, 360)}" alt="" width="240" height="360" loading="lazy"></span><span class="tessera__t">${esc(x.nome)}</span><span class="tessera__n">${x.n} capi</span></a>`;
+  };
+  const stelle = (n) => `<span class="stelle" role="img" aria-label="${n} stelle su 5">${[1, 2, 3, 4, 5].map((k) => `<svg class="ico${k <= n ? " on" : ""}" aria-hidden="true"><use href="#i-star"></use></svg>`).join("")}</span>`;
+  /* recensioni in home: le prime sei, nell'ordine in cui arrivano (per data, non scelte); le altre con un tocco */
+  const REC_SUBITO = 6;
+  function recensioniHtml() {
+    const rec = D.recensioni || { elenco: [] };
+    if (!rec.elenco || !rec.elenco.length) return "";
+    return `<section class="recensioni wrap" aria-labelledby="t-rec">
+  <div class="recensioni__head">
+    <h2 class="h2" id="t-rec">Dicono di noi</h2>
+    <p>${numero(rec.totale)} recensioni su Google. Qui le ${rec.elenco.length} più recenti, così come sono.</p>
+  </div>
+  <ul class="recensioni__l">${rec.elenco
+    .map(
+      (r, i) => `<li class="rec${r.testo ? "" : " rec--solo"}"${i >= REC_SUBITO ? " hidden" : ""}>${stelle(r.stelle)}<p class="rec__chi"><strong>${esc(r.nome)}</strong> · <time datetime="${r.data}">${data(r.data)}</time></p>${r.testo ? `<p class="rec__t">${esc(r.testo).replace(/\n/g, "<br>")}</p>` : `<p class="rec__t rec__t--vuoto">Solo il voto, senza testo.</p>`}</li>`
+    )
+    .join("")}</ul>
+  ${rec.elenco.length > REC_SUBITO ? `<p class="recensioni__piu"><button type="button" class="btn btn--linea" data-rec-tutte>Mostra tutte le ${rec.elenco.length} recensioni</button></p>` : ""}
+  <p class="recensioni__nota">Le recensioni sono pubblicate su Google e raccolte dal servizio Trustindex, che verifica solo che vengano da Google: non sappiamo se chi scrive ha comprato da noi. Le mostriamo tutte, anche le meno positive. <a href="${rec.google}" target="_blank" rel="noopener">Leggile tutte su Google${NUOVA_SCHEDA}</a></p>
+</section>`;
+  }
+  function initRecensioni(main) {
+    const tutte = $("[data-rec-tutte]", main);
+    if (!tutte) return;
+    tutte.addEventListener("click", () => {
+      const nascoste = $$(".rec[hidden]", main);
+      nascoste.forEach((li) => (li.hidden = false));
+      tutte.parentElement.remove();
+      /* il fuoco va alla prima recensione comparsa: chi usa la tastiera o il lettore di schermo riparte da lì */
+      nascoste[0].tabIndex = -1;
+      nascoste[0].focus({ preventScroll: true });
+    });
+  }
+  const negoziHtml = () => `<section class="negozi wrap" aria-labelledby="t-neg">
+  <div class="negozi__img"><img src="${foto(N.foto.negozioBn, 900)}" srcset="${srcset(N.foto.negozioBn, [600, 900, 1086])}" sizes="(min-width:760px) 45vw, 100vw" alt="L'interno di uno dei negozi di Spoleto, in bianco e nero: capi appesi lungo le pareti e un divano al centro" width="900" height="1200" loading="lazy"></div>
+  <div class="negozi__t">
+    <h2 class="h1" id="t-neg">Due negozi a Spoleto</h2>
+    <p>Dal 1985 nel cuore del centro storico di Spoleto: 350 m² nello store L'Arca e 600 m² nel nostro outlet. Online dal 2012.</p>
+    <ul class="negozi__l">${N.negozi.map((n) => `<li>${ico("pin")}<span><strong>${esc(n.nome)}</strong> ${esc(n.via)}<br><a href="${n.mappa}" target="_blank" rel="noopener">Indicazioni${NUOVA_SCHEDA}</a></span></li>`).join("")}</ul>
+    <a class="link-freccia" href="chi-siamo.html">La nostra storia ${ico("right")}</a>
+  </div>
+</section>`;
+
   function mountHome() {
+    if (tema() === "nuova") return mountHomeNuova();
     const main = $("#main");
-    const perMarca = (gruppi, max) => {
-      const n = {};
-      return gruppi.filter((g) => (n[g[0].m] = (n[g[0].m] || 0) + 1) <= max);
-    };
     const nov = perMarca(modelli(P.filter((p) => p.n)), 2).slice(0, 12);
     const outlet = perMarca(modelli(P.filter((p) => p.o && (p.g === "donna" || p.g === "uomo")).sort((a, b) => prezzo(b).pct - prezzo(a).pct || (b.d > a.d ? 1 : -1))), 2).slice(0, 12);
     const tot = { donna: conta(inSezione.donna), uomo: conta(inSezione.uomo), outlet: conta(inSezione.outlet), novita: conta((p) => p.n) };
@@ -919,15 +978,8 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
     const tessere = (g) =>
       categorieDi(inSezione[g], g)
         .slice(0, 10)
-        .map((x) => {
-          const p = P.find((y) => inSezione[g](y) && y.g === g && y.c === x.c);
-          return `<a class="tessera" href="${hrefCat(g, x.c)}"><span class="tessera__img"><img src="${foto(p.i[0], 360)}" alt="" width="240" height="360" loading="lazy"></span><span class="tessera__t">${esc(x.nome)}</span><span class="tessera__n">${x.n} capi</span></a>`;
-        })
+        .map((x) => tessera(P.find((y) => inSezione[g](y) && y.g === g && y.c === x.c), hrefCat(g, x.c), x))
         .join("");
-    const rec = D.recensioni || { elenco: [] };
-    /* in home le prime sei, nell'ordine in cui arrivano (per data, non scelte): le altre con un tocco */
-    const REC_SUBITO = 6;
-    const stelle = (n) => `<span class="stelle" role="img" aria-label="${n} stelle su 5">${[1, 2, 3, 4, 5].map((k) => `<svg class="ico${k <= n ? " on" : ""}" aria-hidden="true"><use href="#i-star"></use></svg>`).join("")}</span>`;
 
     main.innerHTML = `
 ${hero}
@@ -948,42 +1000,73 @@ ${rail("In outlet adesso", "elenco.html?s=outlet", outlet, "t-outr")}
     <div><h3 class="reparti__h"><a href="elenco.html?s=uomo">Uomo</a></h3><div class="tessere">${tessere("uomo")}</div></div>
   </div>
 </section>
-<section class="negozi wrap" aria-labelledby="t-neg">
-  <div class="negozi__img"><img src="${foto(N.foto.negozioBn, 900)}" srcset="${srcset(N.foto.negozioBn, [600, 900, 1086])}" sizes="(min-width:760px) 45vw, 100vw" alt="L'interno di uno dei negozi di Spoleto, in bianco e nero: capi appesi lungo le pareti e un divano al centro" width="900" height="1200" loading="lazy"></div>
-  <div class="negozi__t">
-    <h2 class="h1" id="t-neg">Due negozi a Spoleto</h2>
-    <p>Dal 1985 nel cuore del centro storico di Spoleto: 350 m² nello store L'Arca e 600 m² nel nostro outlet. Online dal 2012.</p>
-    <ul class="negozi__l">${N.negozi.map((n) => `<li>${ico("pin")}<span><strong>${esc(n.nome)}</strong> ${esc(n.via)}<br><a href="${n.mappa}" target="_blank" rel="noopener">Indicazioni${NUOVA_SCHEDA}</a></span></li>`).join("")}</ul>
-    <a class="link-freccia" href="chi-siamo.html">La nostra storia ${ico("right")}</a>
+${negoziHtml()}
+${recensioniHtml()}`;
+    initRecensioni(main);
+  }
+
+  /* Home della versione "nuova". La vetrina sono tre capi appena arrivati, nella foto indossata del negozio:
+     cambia da sola quando cambia il catalogo, e non ha scritte dentro le immagini. */
+  function vetrina() {
+    const recenti = modelli(P.filter((p) => p.n && p.i[1] && INDOSSATI.has(p.c)).sort((a, b) => (a.d < b.d ? 1 : a.d > b.d ? -1 : 0))).map((g) => g[0]);
+    const primo = (f, via) => recenti.find((p) => f(p) && !via.includes(p));
+    const scelti = [];
+    scelti.push(primo((p) => p.g === "donna" && ["capispalla", "giacche", "abiti"].includes(p.c), scelti) || primo((p) => p.g === "donna", scelti));
+    scelti.push(primo((p) => p.g === "uomo" && ["capispalla", "giacche", "maglie", "felpe"].includes(p.c), scelti) || primo((p) => p.g === "uomo", scelti));
+    scelti.push(primo((p) => p.g === "donna" && scelti[0] && p.m !== scelti[0].m, scelti) || primo(() => true, scelti));
+    /* ponytail: se il catalogo non ha tre capi indossati, si riempie coi primi che ci sono */
+    return scelti.map((p, i) => p || recenti[i]).filter(Boolean);
+  }
+  function mountHomeNuova() {
+    const main = $("#main");
+    const nov = perMarca(modelli(P.filter((p) => p.n)), 2).slice(0, 12);
+    const outlet = perMarca(modelli(P.filter((p) => p.o && (p.g === "donna" || p.g === "uomo") && INDOSSATI.has(p.c)).sort((a, b) => prezzo(b).pct - prezzo(a).pct || (b.d > a.d ? 1 : -1))), 1).slice(0, 4);
+    const foto3 = vetrina();
+    const indice = (sez, titolo, href, voci) => `<div class="indice__col">
+    <h2 class="h2"><a href="${href}">${titolo}</a></h2>
+    <ul>${voci.map(([nome, url, n]) => `<li><a href="${url}"><span>${esc(nome)}</span><span class="n">${n}</span></a></li>`).join("")}</ul>
+  </div>`;
+    const cat = (g) => categorieDi(inSezione[g], g).map((x) => [x.nome, hrefCat(g, x.c), x.n]);
+
+    main.innerHTML = `
+<section class="vetrina" aria-labelledby="t-hero">
+  <div class="vetrina__t">
+    <h1 class="vetrina__h" id="t-hero">Abbigliamento firmato, da Spoleto</h1>
+    <p class="vetrina__sub">Oltre 80 brand selezionati per uomo e donna, spediti dal nostro magazzino in 1-2 giorni lavorativi.</p>
+    <p class="vetrina__cta"><a class="btn btn--primario" href="elenco.html?s=donna">Donna</a><a class="btn btn--linea" href="elenco.html?s=uomo">Uomo</a></p>
+  </div>
+  <div class="vetrina__foto">${foto3
+    .map(
+      (p, i) =>
+        `<a class="vetrina__a vetrina__a--${i + 1}" href="prodotto.html?p=${encodeURIComponent(p.h)}"><img src="${foto(p.i[1], i ? 480 : 900)}" srcset="${srcset(p.i[1], i ? [240, 360, 480, 720] : [480, 720, 900, 1200])}" sizes="${i ? "(min-width:900px) 18vw, 32vw" : "(min-width:900px) 36vw, 64vw"}" alt="${esc(`${p.m} ${nomeCapo(p)}`)}" width="600" height="900"${i ? "" : ' fetchpriority="high"'}></a>`
+    )
+    .join("")}</div>
+</section>
+${rail("Novità", "elenco.html?s=novita", nov, "t-nov", 3, { novita: false })}
+<section class="banda" aria-labelledby="t-out">
+  <div class="banda__img"><picture><source media="(max-width: 899px)" srcset="${foto(N.foto.outletVerticale, 800)}"><img src="${foto(N.foto.outlet, 1600)}" alt="Un modello con una giacca K-Way nera sotto la pioggia" width="1600" height="800" loading="lazy"></picture></div>
+  <div class="banda__t">
+    <h2 class="h1" id="t-out">Outlet</h2>
+    <p>Abbigliamento firmato fino al −${MAX_OUTLET}%, per donna, uomo e bambino.</p>
+    <p class="banda__link"><a class="btn btn--linea" href="${hrefCat("outlet", "tutto", "donna")}">Outlet donna</a><a class="btn btn--linea" href="${hrefCat("outlet", "tutto", "uomo")}">Outlet uomo</a><a class="link-freccia" href="elenco.html?s=outlet">Bambino e bambina ${ico("right")}</a></p>
   </div>
 </section>
 ${
-  rec.elenco && rec.elenco.length
-    ? `<section class="recensioni wrap" aria-labelledby="t-rec">
-  <div class="recensioni__head">
-    <h2 class="h2" id="t-rec">Dicono di noi</h2>
-    <p>${numero(rec.totale)} recensioni su Google. Qui le ${rec.elenco.length} più recenti, così come sono.</p>
-  </div>
-  <ul class="recensioni__l">${rec.elenco
-    .map(
-      (r, i) => `<li class="rec${r.testo ? "" : " rec--solo"}"${i >= REC_SUBITO ? " hidden" : ""}>${stelle(r.stelle)}<p class="rec__chi"><strong>${esc(r.nome)}</strong> · <time datetime="${r.data}">${data(r.data)}</time></p>${r.testo ? `<p class="rec__t">${esc(r.testo).replace(/\n/g, "<br>")}</p>` : `<p class="rec__t rec__t--vuoto">Solo il voto, senza testo.</p>`}</li>`
-    )
-    .join("")}</ul>
-  ${rec.elenco.length > REC_SUBITO ? `<p class="recensioni__piu"><button type="button" class="btn btn--linea" data-rec-tutte>Mostra tutte le ${rec.elenco.length} recensioni</button></p>` : ""}
-  <p class="recensioni__nota">Le recensioni sono pubblicate su Google e raccolte dal servizio Trustindex, che verifica solo che vengano da Google: non sappiamo se chi scrive ha comprato da noi. Le mostriamo tutte, anche le meno positive. <a href="${rec.google}" target="_blank" rel="noopener">Leggile tutte su Google${NUOVA_SCHEDA}</a></p>
+  outlet.length
+    ? `<section class="scelti wrap" aria-labelledby="t-outr">
+  <div class="rail__head"><h2 class="h2" id="t-outr">In outlet adesso</h2><a class="link-freccia" href="elenco.html?s=outlet">Vedi tutti ${ico("right")}</a></div>
+  <div class="griglia griglia--4">${outlet.map((g) => scheda(g, { lv: 3 })).join("")}</div>
 </section>`
     : ""
-}`;
-    const tutte = $("[data-rec-tutte]", main);
-    if (tutte)
-      tutte.addEventListener("click", () => {
-        const nascoste = $$(".rec[hidden]", main);
-        nascoste.forEach((li) => (li.hidden = false));
-        tutte.parentElement.remove();
-        /* il fuoco va alla prima recensione comparsa: chi usa la tastiera o il lettore di schermo riparte da lì */
-        nascoste[0].tabIndex = -1;
-        nascoste[0].focus({ preventScroll: true });
-      });
+}
+<section class="indice wrap" aria-label="Categorie e marche">
+  ${indice("donna", "Donna", "elenco.html?s=donna", cat("donna"))}
+  ${indice("uomo", "Uomo", "elenco.html?s=uomo", cat("uomo"))}
+  ${indice("marche", "Marche", "marche.html", marcheTop(() => true, 14).map((m) => [m.nome, "elenco.html?m=" + m.slug, m.n]))}
+</section>
+${negoziHtml()}
+${recensioniHtml()}`;
+    initRecensioni(main);
   }
 
   /* hero "classica": le due foto di campagna del negozio (portano alle novità di donna e di uomo) e le quattro porte.
@@ -1389,10 +1472,7 @@ ${briciole(bc)}
     document.title = (s === "outlet" ? "Outlet" : C.generi[s]) + " | Parmax";
     const tessere = (filtro, g, sez) =>
       categorieDi(filtro, g)
-        .map((x) => {
-          const p = P.find((y) => filtro(y) && y.g === g && y.c === x.c);
-          return `<a class="tessera" href="${hrefCat(sez, x.c, sez === "outlet" ? g : "")}"><span class="tessera__img"><img src="${foto(p.i[0], 360)}" alt="" width="240" height="360" loading="lazy"></span><span class="tessera__t">${esc(x.nome)}</span><span class="tessera__n">${x.n} capi</span></a>`;
-        })
+        .map((x) => tessera(P.find((y) => filtro(y) && y.g === g && y.c === x.c), hrefCat(sez, x.c, sez === "outlet" ? g : ""), x))
         .join("");
     if (s === "outlet") {
       const generi = ["donna", "uomo", "bambina", "bambino"].filter((g) => conta((p) => p.o && p.g === g));
@@ -1595,6 +1675,8 @@ ${briciole([["Home", "index.html"], [C.generi[s], ""]])}
       : "";
 
     const fotoLista = m.foto.length ? m.foto : [];
+    /* quali foto sono il capo da solo su fondo bianco: la prima, o tutte per scarpe e accessori */
+    const ritaglio = (i) => i === 0 || !INDOSSATI.has(m.c);
     const etichetta = m.etichetta || "Taglia";
 
     const fit = m.det && m.det.fit ? m.det.fit.replace(/<\/?p>/g, " ").trim() : "";
@@ -1605,20 +1687,20 @@ ${briciole([["Home", "index.html"], [C.generi[s], ""]])}
 
     main.innerHTML = `
 ${briciole(bc)}
-<div class="pdp wrap">
+<div class="pdp wrap" data-c="${esc(m.c || "")}">
   <div class="pdp__gal" data-gal>
     <div class="gal__track" data-track tabindex="0" role="region" aria-label="Foto del prodotto, ${fotoLista.length} in tutto: scorri di lato">
       ${fotoLista
         .map(
           (f, i) =>
-            `<figure class="gal__slide"><button type="button" class="gal__zoom" data-zoom="${i}" aria-label="Ingrandisci la foto ${i + 1} di ${fotoLista.length}"><img src="${foto(f, 900)}" srcset="${srcset(f, [480, 720, 900, 1200, 1600])}" sizes="(min-width:1120px) 44vw, (min-width:760px) 50vw, 86vw" alt="${esc(`${m.m} ${nome}${m.k ? ", " + (multi ? scelta.colore : m.k) : ""}, foto ${i + 1}`)}" width="900" height="1350"${i === 0 ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"></button></figure>`
+            `<figure class="gal__slide"><button type="button" class="gal__zoom" data-zoom="${i}" aria-label="Ingrandisci la foto ${i + 1} di ${fotoLista.length}"><img${ritaglio(i) ? ' class="is-ritaglio"' : ""} src="${foto(f, 900)}" srcset="${srcset(f, [480, 720, 900, 1200, 1600])}" sizes="(min-width:1120px) 44vw, (min-width:760px) 50vw, 86vw" alt="${esc(`${m.m} ${nome}${m.k ? ", " + (multi ? scelta.colore : m.k) : ""}, foto ${i + 1}`)}" width="900" height="1350"${i === 0 ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"></button></figure>`
         )
         .join("")}
     </div>
     ${
       fotoLista.length > 1
         ? `<div class="gal__thumbs" role="group" aria-label="Scegli la foto">${fotoLista
-            .map((f, i) => `<button type="button" class="gal__th${i === 0 ? " is-on" : ""}" data-vai="${i}" aria-label="Foto ${i + 1}"${i === 0 ? ' aria-current="true"' : ""}><img src="${foto(f, 160)}" alt="" width="64" height="96" loading="lazy"></button>`)
+            .map((f, i) => `<button type="button" class="gal__th${i === 0 ? " is-on" : ""}" data-vai="${i}" aria-label="Foto ${i + 1}"${i === 0 ? ' aria-current="true"' : ""}><img${ritaglio(i) ? ' class="is-ritaglio"' : ""} src="${foto(f, 160)}" alt="" width="64" height="96" loading="lazy"></button>`)
             .join("")}</div>`
         : ""
     }
