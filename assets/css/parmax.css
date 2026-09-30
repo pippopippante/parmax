@@ -221,7 +221,7 @@ ul, ol { padding: 0; list-style: none; }
   [data-tema="rinnovata"] .mega__all { font-stretch: 75%; text-transform: uppercase; font-size: 22px; font-weight: 800; }
   .mega__cats { columns: 3; column-gap: 32px; }
   .mega__cats li, .mega__side li, .mega__col li { break-inside: avoid; }
-  .mega a:not(.mega__all):not(.mega__more) { display: block; padding: 6px 0; font-size: 15px; text-decoration: none; }
+  .mega a:not(.mega__all):not(.mega__more) { display: block; padding: 6px 0; font-size: 16px; text-decoration: none; }
   .mega a:not(.mega__all):not(.mega__more):hover { text-decoration: underline; }
   .mega__side { border-left: 1px solid var(--line); padding-left: 32px; }
   .mega__h { color: var(--ink-2); margin-bottom: 10px; }
@@ -380,7 +380,6 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .card__b { padding-top: 10px; display: grid; gap: 3px; }
 .card__m { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card__n { font-size: 15px; font-weight: 400; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-[data-tema="rinnovata"] .card__n { font-size: 15px; }
 .card__n a { text-decoration: none; }
 .card__n a::after { content: ""; position: absolute; inset: 0; z-index: 1; }
 .card__n a:focus-visible { outline: none; }
@@ -861,6 +860,16 @@ dialog.zoom { margin: 0; padding: 0; border: 0; width: 100vw; height: 100dvh; ma
 .tema { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; }
 .tema button { min-height: 36px; padding: 0 12px; border: 1px solid currentColor; font-size: 13px; }
 .tema [aria-pressed="true"] { background: var(--ftr-ink); color: var(--ftr); }
+
+/* computer: i testi da leggere a 16 px (regola del metodo: sotto i 16 "da PC non si legge nulla").
+   Marca, taglie, briciole e note restano piccole: sono etichette */
+@media (min-width: 1120px) {
+  .card__n, .card__p, .tessera__t, .link-freccia, .elenco__conta, .fg__l label, .ordina select,
+  .desc, .garanzie, .pdp__lbl, .pdp__fit, .pdp__ps a, .pdp__errore, .pdp__esaurito, .opz,
+  .riga__n, .riga__p, .somma, .cerca__n, .toast, .zona__paesi, .contatto p, .ftr__col li, .ftr__servizi span { font-size: 16px; }
+  .fg__l--griglia label { font-size: 15px; }
+  .dubbi p:not(.dubbi__t):not(.dubbi__l) { font-size: 15px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
