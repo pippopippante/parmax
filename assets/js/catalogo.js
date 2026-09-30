@@ -40,7 +40,22 @@ window.CATALOGO = {
          il negozio le cambia a ogni stagione, qui va aggiornato il nome del file */
       campagna: { donna: "new-in-donna-fw27-parmax-abbigliamento.jpg", uomo: "new-in-uomo-fw27-parmax-abbigliamento.jpg" },
       /* interno in bianco e nero, dal riquadro "La nostra storia" di parmax.com ("Oggi"): quale dei due negozi sia è da confermare */
-      negozioBn: "parmax-storia-spoleto.jpg"
+      negozioBn: "parmax-storia-spoleto.jpg",
+      /* dal riquadro "La nostra storia" di parmax.com: il negozio nel 1985 e la parete delle borse */
+      storia1985: "parmax-storia-1985-boutique-spoleto.jpg",
+      borse: "parmax-storia-borse.jpg",
+      /* foto delle campagne delle marche, caricate dal negozio nelle sue collezioni (1600×500).
+         Nell'ordine in cui le usa la versione "rivista" (la prima fa da copertina); "notte" usa quelle segnate scure. */
+      campagne: [
+        ["MaxMara Studio", "Parmax-abbigliamento-donna-MaxMara_Studio.jpg"],
+        ["Liu Jo", "Parmax-abbigliamento-donna-Liu_Jo.jpg"],
+        ["Polo Ralph Lauren", "Polo_Ralph_Lauren-collections-parmax.jpg"],
+        ["Pinko", "parmax-abbigliamento-donna-borse-pinko.webp", "scura"],
+        ["Elisabetta Franchi", "parmax-abbigliamento-donna-elisabetta_franchi.webp"],
+        ["K-Way", "Parmax-abbigliamento-uomo-donna-k_way.jpg"],
+        ["Emporio Armani", "parmax-abbigliamento-uomo-emporio_armani.webp", "scura"],
+        ["Imperial", "Parmax-abbigliamento-donna-imperial.jpg"]
+      ].map(([m, f, scura]) => ({ m, url: "https://cdn.shopify.com/s/files/1/0773/5364/8412/collections/" + f, scura: !!scura }))
     }
   },
 

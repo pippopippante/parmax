@@ -43,11 +43,12 @@
   const srcset = (path, larghezze) => larghezze.map((w) => foto(path, w) + " " + w + "w").join(", ");
 
   /* Il negozio carica per ogni capo due foto: il capo da solo (fondo bianco) e il capo indossato (fondo grigio
-     da studio). Nella versione "nuova" le schede dei vestiti mostrano prima quella indossata; per scarpe, borse
+     da studio). Nelle tre versioni nuove (casa, rivista, notte) le schede dei vestiti mostrano prima quella indossata; per scarpe, borse
      e accessori anche la seconda foto è di solito il capo da solo, quindi lì resta l'ordine del negozio.
      Restituisce [prima foto, seconda foto, la prima è quella indossata]. */
   const INDOSSATI = new Set(["capispalla", "giacche", "maglie", "felpe", "camicie", "t-shirt", "top", "abiti", "completi", "tute", "gonne", "pantaloni", "jeans", "gilet", "bermuda"]);
-  const fotoScheda = (p) => (tema() === "nuova" && p.i[1] && INDOSSATI.has(p.c) ? [p.i[1], p.i[0], true] : [p.i[0], p.i[1], false]);
+  const NUOVE = new Set(["casa", "rivista", "notte"]);
+  const fotoScheda = (p) => (NUOVE.has(tema()) && p.i[1] && INDOSSATI.has(p.c) ? [p.i[1], p.i[0], true] : [p.i[0], p.i[1], false]);
 
   /* WhatsApp col messaggio già iniziato (regola del metodo: "vi scrivo dal sito ...") */
   const wa = (testo) => "https://wa.me/" + N.waNum + "?text=" + encodeURIComponent(testo);
@@ -318,8 +319,8 @@
   }
 
   /* ------------------------------------------------------------ tema */
-  /* Tre versioni da mostrare al negozio: "classica" (stesso marchio), "rinnovata" (il cartellone) e "nuova"
-     (libera dal sito di oggi: foto indossate, un carattere solo, assets/css/nuova.css).
+  /* Versioni da mostrare al negozio: "classica" (stesso marchio) e "rinnovata" (il cartellone), con parmax.css;
+     "casa", "rivista" e "notte", libere dal sito di oggi, con assets/css/nuova.css: foto indossate e ognuna il suo carattere.
      ponytail: interruttore solo per l'anteprima; scelta la versione, si toglie con l'altro set di colori. */
   const tema = () => document.documentElement.dataset.tema || "classica";
   function cambiaTema(t) {
@@ -615,7 +616,9 @@
       <span>Anteprima:</span>
       <button type="button" data-tema="classica" aria-pressed="${tema() === "classica"}">Classica</button>
       <button type="button" data-tema="rinnovata" aria-pressed="${tema() === "rinnovata"}">Rinnovata</button>
-      <button type="button" data-tema="nuova" aria-pressed="${tema() === "nuova"}">Nuova</button>
+      <button type="button" data-tema="casa" aria-pressed="${tema() === "casa"}">Casa</button>
+      <button type="button" data-tema="rivista" aria-pressed="${tema() === "rivista"}">Rivista</button>
+      <button type="button" data-tema="notte" aria-pressed="${tema() === "notte"}">Notte</button>
     </div>
   </div>
 </footer>
@@ -968,7 +971,7 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
 </section>`;
 
   function mountHome() {
-    if (tema() === "nuova") return mountHomeNuova();
+    if (NUOVE.has(tema())) return mountHomeNuova();
     const main = $("#main");
     const nov = perMarca(modelli(P.filter((p) => p.n)), 2).slice(0, 12);
     const outlet = perMarca(modelli(P.filter((p) => p.o && (p.g === "donna" || p.g === "uomo")).sort((a, b) => prezzo(b).pct - prezzo(a).pct || (b.d > a.d ? 1 : -1))), 2).slice(0, 12);
@@ -1005,64 +1008,84 @@ ${recensioniHtml()}`;
     initRecensioni(main);
   }
 
-  /* Home della versione "nuova". La vetrina sono tre capi appena arrivati, nella foto indossata del negozio:
-     cambia da sola quando cambia il catalogo, e non ha scritte dentro le immagini. */
-  function vetrina() {
-    const recenti = modelli(P.filter((p) => p.n && p.i[1] && INDOSSATI.has(p.c)).sort((a, b) => (a.d < b.d ? 1 : a.d > b.d ? -1 : 0))).map((g) => g[0]);
-    const primo = (f, via) => recenti.find((p) => f(p) && !via.includes(p));
-    const scelti = [];
-    scelti.push(primo((p) => p.g === "donna" && ["capispalla", "giacche", "abiti"].includes(p.c), scelti) || primo((p) => p.g === "donna", scelti));
-    scelti.push(primo((p) => p.g === "uomo" && ["capispalla", "giacche", "maglie", "felpe"].includes(p.c), scelti) || primo((p) => p.g === "uomo", scelti));
-    scelti.push(primo((p) => p.g === "donna" && scelti[0] && p.m !== scelti[0].m, scelti) || primo(() => true, scelti));
-    /* ponytail: se il catalogo non ha tre capi indossati, si riempie coi primi che ci sono */
-    return scelti.map((p, i) => p || recenti[i]).filter(Boolean);
-  }
+  /* Home delle tre versioni nuove: stessa ossatura, ognuna con la sua apertura e qualche sezione sua.
+     casa: il negozio L'Arca e il 1985; rivista: le campagne delle marche; notte: "The Fashion Place" (dalle gift card) */
   function mountHomeNuova() {
+    const t = tema();
     const main = $("#main");
     const nov = perMarca(modelli(P.filter((p) => p.n)), 2).slice(0, 12);
     const outlet = perMarca(modelli(P.filter((p) => p.o && (p.g === "donna" || p.g === "uomo") && INDOSSATI.has(p.c)).sort((a, b) => prezzo(b).pct - prezzo(a).pct || (b.d > a.d ? 1 : -1))), 1).slice(0, 4);
-    const foto3 = vetrina();
-    const indice = (sez, titolo, href, voci) => `<div class="indice__col">
+    const tot = { donna: conta(inSezione.donna), uomo: conta(inSezione.uomo) };
+    const camp = (N.foto.campagne || []).map((x) => Object.assign({ marca: marcaDa(slug(x.m)) }, x)).filter((x) => x.marca);
+    const sub = `<p class="apri__sub">Oltre 80 brand selezionati per uomo e donna, spediti dal nostro magazzino in 1-2 giorni lavorativi.</p>`;
+    const cta = `<p class="apri__cta"><a class="btn btn--primario" href="elenco.html?s=donna">Donna</a><a class="btn btn--linea" href="elenco.html?s=uomo">Uomo</a><a class="btn btn--linea" href="elenco.html?s=outlet">Outlet</a></p>`;
+    const storie = (lista, cls) =>
+      lista.length
+        ? `<section class="storie wrap${cls ? " " + cls : ""}" aria-labelledby="t-marche">
+  <div class="rail__head"><h2 class="h2" id="t-marche">Le marche</h2><a class="link-freccia" href="marche.html">Tutte le marche ${ico("right")}</a></div>
+  <div class="storie__g">${lista
+    .map(
+      (x) =>
+        `<a class="camp" href="elenco.html?m=${x.marca.slug}"><span class="camp__img"><img src="${foto(x.url, 1200)}" srcset="${srcset(x.url, [800, 1200, 1600])}" sizes="(min-width:760px) 50vw, 100vw" alt="" width="1600" height="500" loading="lazy"></span><span class="camp__t"><span class="camp__m">${esc(x.marca.nome)}</span><span class="n">${x.marca.n} capi</span></span></a>`
+    )
+    .join("")}</div>
+</section>`
+        : "";
+    const indice = (titolo, href, voci) => `<div class="indice__col">
     <h2 class="h2"><a href="${href}">${titolo}</a></h2>
     <ul>${voci.map(([nome, url, n]) => `<li><a href="${url}"><span>${esc(nome)}</span><span class="n">${n}</span></a></li>`).join("")}</ul>
   </div>`;
     const cat = (g) => categorieDi(inSezione[g], g).map((x) => [x.nome, hrefCat(g, x.c), x.n]);
-
-    main.innerHTML = `
-<section class="vetrina" aria-labelledby="t-hero">
-  <div class="vetrina__t">
-    <h1 class="vetrina__h" id="t-hero">Abbigliamento firmato, da Spoleto</h1>
-    <p class="vetrina__sub">Oltre 80 brand selezionati per uomo e donna, spediti dal nostro magazzino in 1-2 giorni lavorativi.</p>
-    <p class="vetrina__cta"><a class="btn btn--primario" href="elenco.html?s=donna">Donna</a><a class="btn btn--linea" href="elenco.html?s=uomo">Uomo</a></p>
-  </div>
-  <div class="vetrina__foto">${foto3
-    .map(
-      (p, i) =>
-        `<a class="vetrina__a vetrina__a--${i + 1}" href="prodotto.html?p=${encodeURIComponent(p.h)}"><img src="${foto(p.i[1], i ? 480 : 900)}" srcset="${srcset(p.i[1], i ? [240, 360, 480, 720] : [480, 720, 900, 1200])}" sizes="${i ? "(min-width:900px) 18vw, 32vw" : "(min-width:900px) 36vw, 64vw"}" alt="${esc(`${p.m} ${nomeCapo(p)}`)}" width="600" height="900"${i ? "" : ' fetchpriority="high"'}></a>`
-    )
-    .join("")}</div>
-</section>
-${rail("Novità", "elenco.html?s=novita", nov, "t-nov", 3, { novita: false })}
-<section class="banda" aria-labelledby="t-out">
+    const banda = `<section class="banda" aria-labelledby="t-out">
   <div class="banda__img"><picture><source media="(max-width: 899px)" srcset="${foto(N.foto.outletVerticale, 800)}"><img src="${foto(N.foto.outlet, 1600)}" alt="Un modello con una giacca K-Way nera sotto la pioggia" width="1600" height="800" loading="lazy"></picture></div>
   <div class="banda__t">
     <h2 class="h1" id="t-out">Outlet</h2>
     <p>Abbigliamento firmato fino al −${MAX_OUTLET}%, per donna, uomo e bambino.</p>
     <p class="banda__link"><a class="btn btn--linea" href="${hrefCat("outlet", "tutto", "donna")}">Outlet donna</a><a class="btn btn--linea" href="${hrefCat("outlet", "tutto", "uomo")}">Outlet uomo</a><a class="link-freccia" href="elenco.html?s=outlet">Bambino e bambina ${ico("right")}</a></p>
   </div>
-</section>
-${
-  outlet.length
-    ? `<section class="scelti wrap" aria-labelledby="t-outr">
+</section>`;
+    const scelti = outlet.length
+      ? `<section class="scelti wrap" aria-labelledby="t-outr">
   <div class="rail__head"><h2 class="h2" id="t-outr">In outlet adesso</h2><a class="link-freccia" href="elenco.html?s=outlet">Vedi tutti ${ico("right")}</a></div>
   <div class="griglia griglia--4">${outlet.map((g) => scheda(g, { lv: 3 })).join("")}</div>
 </section>`
-    : ""
-}
+      : "";
+
+    let apertura = "";
+    let mezzo = "";
+    if (t === "casa") {
+      apertura = `<section class="apri apri--casa" aria-labelledby="t-hero">
+  <div class="apri__foto"><img src="${foto(N.foto.negozio, 1200)}" srcset="${srcset(N.foto.negozio, [600, 900, 1200, 1600])}" sizes="(min-width:900px) 52vw, 100vw" alt="L'interno del negozio L'Arca a Spoleto, con le volte affrescate" width="1200" height="1600" fetchpriority="high"></div>
+  <div class="apri__t">
+    <div class="apri__testo"><p class="apri__dove">Corso Garibaldi · Spoleto</p><h1 class="apri__h" id="t-hero">Dal 1985 nel cuore del centro storico di <em>Spoleto</em></h1>${sub}${cta}</div>
+    <figure class="apri__album"><img src="${foto(N.foto.storia1985, 700)}" alt="Il negozio nel 1985, addobbato per Natale, con tre persone davanti all'ingresso" width="700" height="483" loading="lazy"><figcaption>Il negozio nel 1985. Oggi sono due: L'Arca in centro e l'outlet in Via dei Tessili.</figcaption></figure>
+  </div>
+</section>`;
+      mezzo = banda + scelti;
+    } else if (t === "rivista") {
+      const cop = camp[0];
+      apertura = `<section class="apri apri--rivista" aria-labelledby="t-hero">
+  ${cop ? `<a class="apri__cop" href="elenco.html?m=${cop.marca.slug}"><img src="${foto(cop.url, 1600)}" srcset="${srcset(cop.url, [800, 1200, 1600])}" sizes="100vw" alt="${esc(cop.marca.nome)}, la campagna" width="1600" height="500" fetchpriority="high"></a>` : ""}
+  <div class="apri__t"><h1 class="apri__h" id="t-hero">Le marche della stagione</h1>${cta}</div>
+</section>
+<p class="sommario wrap"><strong>In negozio</strong><span>${numero(MARCHE.length)} marche, ${numero(tot.donna)} capi donna, ${numero(tot.uomo)} uomo e l'outlet fino al −${MAX_OUTLET}%.</span></p>`;
+      mezzo = storie(camp.slice(1, 7)) + banda;
+    } else {
+      apertura = `<section class="apri apri--notte" aria-labelledby="t-hero">
+  <img class="apri__sfondo" src="${foto(N.foto.borse, 1600)}" srcset="${srcset(N.foto.borse, [800, 1200, 1600])}" sizes="100vw" alt="" width="1600" height="1120" fetchpriority="high">
+  <div class="apri__t wrap"><h1 class="apri__h" id="t-hero"><span class="sr">Parmax, </span>The Fashion <span>Place</span></h1><p class="apri__sub">Oltre 80 brand selezionati per uomo e donna, dal centro storico di Spoleto.</p>${cta}</div>
+</section>`;
+      mezzo = storie(camp.filter((x) => x.scura).slice(0, 2), "storie--2") + banda + scelti;
+    }
+
+    main.innerHTML = `
+${apertura}
+${rail("Novità", "elenco.html?s=novita", nov, "t-nov", 3, { novita: false })}
+${mezzo}
 <section class="indice wrap" aria-label="Categorie e marche">
-  ${indice("donna", "Donna", "elenco.html?s=donna", cat("donna"))}
-  ${indice("uomo", "Uomo", "elenco.html?s=uomo", cat("uomo"))}
-  ${indice("marche", "Marche", "marche.html", marcheTop(() => true, 14).map((m) => [m.nome, "elenco.html?m=" + m.slug, m.n]))}
+  ${indice("Donna", "elenco.html?s=donna", cat("donna"))}
+  ${indice("Uomo", "elenco.html?s=uomo", cat("uomo"))}
+  ${indice("Marche", "marche.html", marcheTop(() => true, 14).map((m) => [m.nome, "elenco.html?m=" + m.slug, m.n]))}
 </section>
 ${negoziHtml()}
 ${recensioniHtml()}`;

@@ -22,19 +22,21 @@
 <link rel="stylesheet" href="assets/css/parmax.css">
 <link rel="stylesheet" href="assets/css/nuova.css">
 <script>
-/* versione da mostrare: ?tema=classica, ?tema=rinnovata o ?tema=nuova, ricordata nel browser.
-   I due fogli di stile arrivano insieme e si spegne quello che non serve (la nuova ha il suo, le altre due
-   dividono parmax.css); il carattere si scarica solo per la versione scelta. */
+/* versione da mostrare: ?tema=classica, rinnovata, casa, rivista o notte, ricordata nel browser.
+   I due fogli di stile arrivano insieme e si spegne quello che non serve (classica e rinnovata usano parmax.css,
+   casa, rivista e notte nuova.css); il carattere si scarica solo per la versione scelta. */
 (function () {
   var t, d = document.documentElement, fogli = document.querySelectorAll('link[href^="assets/css/"]');
   try { t = new URLSearchParams(location.search).get("tema"); if (t) localStorage.setItem("parmax:tema", t); else t = localStorage.getItem("parmax:tema"); } catch (e) {}
-  t = t === "rinnovata" || t === "nuova" ? t : "classica";
+  if (t === "nuova") t = "casa";
+  var nuove = { casa: 1, rivista: 1, notte: 1 };
+  t = t === "rinnovata" || nuove[t] ? t : "classica";
   d.dataset.tema = t;
-  fogli[0].disabled = t === "nuova";
-  fogli[1].disabled = t !== "nuova";
+  fogli[0].disabled = !!nuove[t];
+  fogli[1].disabled = !nuove[t];
   var l = document.createElement("link");
   l.rel = "stylesheet";
-  l.href = "https://fonts.googleapis.com/css2?family=" + { classica: "Playfair+Display:wght@400;500&family=Work+Sans:wght@400..700", rinnovata: "Archivo:wdth,wght@62..125,400..900", nuova: "Jost:wght@300..600" }[t] + "&display=swap";
+  l.href = "https://fonts.googleapis.com/css2?family=" + { classica: "Playfair+Display:wght@400;500&family=Work+Sans:wght@400..700", rinnovata: "Archivo:wdth,wght@62..125,400..900", casa: "Libre+Caslon+Display&family=Libre+Caslon+Text:ital@1&family=Karla:wght@400..700", rivista: "Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Figtree:wght@400..700", notte: "Italiana&family=Work+Sans:wght@400..600" }[t] + "&display=swap";
   document.head.appendChild(l);
 })();
 </script>

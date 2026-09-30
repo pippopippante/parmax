@@ -1,9 +1,12 @@
 /* ==========================================================================
-   Parmax, versione "nuova": foglio di stile suo (con questa versione parmax.css è spento).
+   Parmax, versioni "casa", "rivista" e "notte": l'ossatura comune (con queste versioni parmax.css è spento).
    Codice di Emanuele Parmegiani.
-   L'idea: la boutique silenziosa. Foto grandi del capo indossato (la seconda foto del negozio, su fondo
-   grigio da studio), un carattere solo (Jost, geometrico come il logo PARMAX) con i titoli in maiuscolo
-   leggero, bianco e nero con il rosso solo per gli sconti, angoli vivi, niente ombre sui riquadri.
+   In comune: foto grandi del capo indossato (la seconda foto del negozio, su fondo grigio da studio),
+   angoli vivi, niente ombre sui riquadri. Colori e caratteri sono gettoni (--acc, --disp, --h-*) che ogni
+   versione cambia in fondo al file, insieme all'apertura della home:
+   - casa: il negozio L'Arca e il 1985, pietra chiara e verde scuro, Libre Caslon;
+   - rivista: le campagne delle marche, bianco e nero col rosso, Bodoni corsivo;
+   - notte: "The Fashion Place" delle gift card, fondo scuro e oro, Italiana.
    Telefono < 760 px, tablet 760-1119 px, computer >= 1120 px (gli stessi punti di parmax.js).
    ========================================================================== */
 
@@ -18,7 +21,17 @@
   --sale: #ad2318;      /* l'unico colore del sito: i prezzi scontati */
   --focus: #141414;
   --scrim: rgba(20, 20, 20, 0.45);
-  --font: "Jost", "Futura", "Century Gothic", system-ui, sans-serif;
+  --acc: #141414;       /* pulsante principale */
+  --acc-ink: #fcfcfb;
+  --acc-hover: #3a3a38;
+  --font: system-ui, sans-serif;
+  --disp: var(--font);  /* titoli */
+  --h-style: normal;
+  --h-weight: 400;
+  --h-case: none;
+  --h-track: 0;
+  --h-color: var(--ink);
+  --logo-filter: none;
   --gut: 16px;
   --hdr: 56px;
   --max: 1760px;
@@ -59,11 +72,14 @@ strong { font-weight: 500; }
 
 /* ------------------------------------------------------------- caratteri */
 /* titoli: maiuscolo leggero con un po' d'aria fra le lettere */
-.h1, .vetrina__h {
-  font-weight: 300; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.08; text-wrap: balance;
-  font-size: clamp(26px, 3vw, 44px);
+/* titoli nel carattere della versione */
+.h1, .h2, .apri__h, .pdp__nome, .mega__all, .bl, .az__l, .vuoto__t, .tessera--tutto .tessera__t, .camp__m {
+  font-family: var(--disp); font-style: var(--h-style); font-weight: var(--h-weight);
+  text-transform: var(--h-case); letter-spacing: var(--h-track); color: var(--h-color); text-wrap: balance;
 }
-.h2 { font-size: clamp(17px, 1.5vw, 20px); font-weight: 400; text-transform: uppercase; letter-spacing: 0.14em; line-height: 1.3; }
+.h1 { font-size: clamp(34px, 3.4vw, 58px); line-height: 1.04; }
+.h2 { font-size: clamp(28px, 2.5vw, 44px); line-height: 1.08; }
+.hdr__logo img, .panel__logo, .ftr__logo { filter: var(--logo-filter); }
 .h2 a { text-decoration: none; }
 .h2 a:hover { text-decoration: underline; }
 /* etichette: maiuscolo con poco spazio fra le lettere (10%), mai sotto i 12 px */
@@ -81,8 +97,8 @@ strong { font-weight: 500; }
 .btn:active { transform: translateY(1px); }
 /* su telefono un'etichetta lunga va a capo invece di uscire dallo schermo (a 320 px "Mostra tutte le 15 recensioni") */
 @media (max-width: 759px) { .btn { max-width: 100%; white-space: normal; text-align: center; line-height: 1.3; } }
-.btn--primario { background: var(--ink); color: var(--bg); }
-.btn--primario:hover { background: #3a3a38; }
+.btn--primario { background: var(--acc); color: var(--acc-ink); }
+.btn--primario:hover { background: var(--acc-hover); }
 .btn--linea { border-color: var(--ink); color: var(--ink); background: transparent; }
 .btn--linea:hover { background: var(--ink); color: var(--bg); }
 .btn--chiaro { background: var(--bg); color: var(--ink); }
@@ -150,7 +166,7 @@ strong { font-weight: 500; }
     box-shadow: 0 30px 40px -34px rgba(20, 20, 20, 0.35); padding: 40px 0 48px;
   }
   .mega__in { display: grid; grid-template-columns: 1fr 280px; gap: 56px; }
-  .mega__all { display: inline-flex; align-items: baseline; gap: 10px; margin-bottom: 20px; text-decoration: none; font-size: 22px; font-weight: 300; text-transform: uppercase; letter-spacing: 0.06em; }
+  .mega__all { display: inline-flex; align-items: baseline; gap: 10px; margin-bottom: 20px; text-decoration: none; font-size: 28px; line-height: 1.1; }
   .mega__all:hover { text-decoration: underline; }
   .mega__cats { columns: 3; column-gap: 40px; }
   .mega__cats li, .mega__side li, .mega__col li { break-inside: avoid; }
@@ -252,7 +268,7 @@ dialog.panel::backdrop, dialog.zoom::backdrop { background: var(--scrim); }
 .somma__nota { font-size: 14px; color: var(--ink-2); margin: 8px 0 16px; }
 .somma__cassa { font-size: 13px; color: var(--ink-2); margin-top: 12px; }
 .vuoto { padding: 44px 0; display: grid; gap: 12px; justify-items: start; }
-.vuoto__t { font-size: 18px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.08em; }
+.vuoto__t { font-size: 26px; line-height: 1.15; }
 .vuoto__link { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
 .vuoto--elenco { grid-column: 1 / -1; padding: 56px 0; max-width: 60ch; }
 .vuoto--pagina { padding: 72px var(--gut) 40px; }
@@ -334,34 +350,70 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .bc [aria-current] { color: var(--ink); }
 
 /* =================================================================== HOME */
-/* vetrina: tre capi appena arrivati, nella foto indossata. La foto grande è alta quanto le due piccole:
-   con due colonne 2fr/1fr e il riquadro largo quanto è alto (più lo spazio in mezzo) resta esattamente 2:3 */
-.vetrina { display: grid; gap: 24px; max-width: var(--max); margin-inline: auto; padding: 10px var(--gut) 0; }
-.vetrina__foto {
-  order: -1; display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; gap: 6px;
-  height: calc(100vw - 2 * var(--gut) - 6px);
-}
-.vetrina__a { display: block; position: relative; overflow: hidden; background: var(--tile); }
-.vetrina__a--1 { grid-row: 1 / 3; }
-.vetrina__a img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; transition: transform 0.9s var(--ease); }
-.vetrina__a:focus-visible { outline-offset: -5px; }
-.vetrina__a:focus-visible img { outline: 3px solid var(--bg); outline-offset: -8px; }
-.vetrina__t { display: grid; gap: 16px; align-content: end; }
-.vetrina__h { font-size: clamp(30px, 8.4vw, 76px); letter-spacing: 0.03em; line-height: 1.02; }
-.vetrina__sub { color: var(--ink-2); max-width: 42ch; }
-.vetrina__cta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-@media (min-width: 760px) {
-  .vetrina__foto { height: min(calc(100vw - 2 * var(--gut) - 6px), 68vh); width: min(100%, calc(68vh + 6px)); }
-  .vetrina__cta { display: flex; }
-}
+/* aperture della home: una per versione (le regole comuni qui, colori e caratteri dai gettoni) */
+.apri__sub { color: var(--ink-2); max-width: 44ch; font-size: 17px; }
+.apri__cta { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 759px) { .apri__cta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); } .apri__cta .btn { padding: 0 8px; } }
+
+/* casa: la foto del negozio a sinistra, il titolo su pietra chiara a destra e sotto la foto del 1985 */
+.apri--casa { display: grid; }
+.apri--casa .apri__foto { height: 46vh; min-height: 280px; overflow: hidden; background: var(--tile); }
+.apri--casa .apri__foto img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
+.apri--casa .apri__t { background: var(--pietra); padding: 28px var(--gut) 32px; display: grid; gap: 32px; }
+.apri__testo { display: grid; gap: 18px; align-content: start; }
+.apri__dove { font-size: 15px; font-weight: 600; color: var(--acc); }
+.apri--casa .apri__h { font-size: clamp(38px, 4vw, 76px); line-height: 1.02; }
+.apri--casa .apri__h em { font-family: "Libre Caslon Text", Georgia, serif; font-style: italic; }
+.apri__album { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: end; }
+.apri__album img { width: clamp(130px, 16vw, 300px); filter: grayscale(1); }
+.apri__album figcaption { font-size: 14px; color: var(--ink-2); max-width: 30ch; }
 @media (min-width: 900px) {
-  .vetrina { grid-template-columns: minmax(0, 1fr) auto; gap: clamp(32px, 4vw, 80px); align-items: end; padding-top: 24px; }
-  .vetrina__foto { order: 0; --h: min(calc(100dvh - var(--hdr) - 48px), 900px, calc(56vw - 40px)); height: var(--h); width: calc(var(--h) + 8px); gap: 8px; }
-  /* il titolo in alto, allineato alle foto; testo e pulsanti in basso, allineati alla fine delle foto */
-  .vetrina__t { align-self: stretch; grid-template-rows: 1fr auto auto; gap: 20px; padding-bottom: 2px; }
-  .vetrina__h { align-self: start; font-size: clamp(40px, 4.6vw, 96px); margin-top: -0.08em; }
+  .apri--casa { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); height: calc(100dvh - var(--hdr)); min-height: 600px; max-height: 1040px; }
+  .apri--casa .apri__foto { height: auto; }
+  .apri--casa .apri__t { padding: clamp(32px, 4.5vh, 64px) clamp(28px, 4vw, 72px); align-content: space-between; overflow: hidden; }
 }
-@media (hover: hover) and (pointer: fine) { .vetrina__a:hover img { transform: scale(1.025); } }
+
+/* rivista: la campagna di una marca a tutta larghezza, sotto il titolo in corsivo */
+.apri--rivista .apri__cop { display: block; overflow: hidden; background: var(--tile); }
+.apri--rivista .apri__cop img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; object-position: 47% 50%; transform: scale(1.03); }
+/* scale(1.03): alcune foto delle campagne hanno un filo bianco sul bordo; il riquadro lo taglia */
+.apri--rivista .apri__t { display: grid; gap: 20px; max-width: var(--max); margin-inline: auto; padding: 22px var(--gut) 26px; }
+.apri--rivista .apri__h { font-size: clamp(46px, 6.2vw, 120px); line-height: 0.95; }
+@media (min-width: 760px) {
+  .apri--rivista .apri__cop img { aspect-ratio: 3.2 / 1; }
+  .apri--rivista .apri__t { display: flex; align-items: end; justify-content: space-between; gap: 40px; padding-top: 26px; padding-bottom: 30px; }
+  .apri--rivista .apri__cta { flex: none; }
+}
+.sommario { display: grid; gap: 4px; padding-top: 18px; padding-bottom: 18px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+.sommario strong { font-family: var(--disp); font-style: italic; font-weight: 600; font-size: 24px; color: var(--sale); }
+.sommario span { color: var(--ink-2); font-size: 17px; }
+@media (min-width: 760px) { .sommario { grid-template-columns: auto 1fr; gap: 32px; align-items: baseline; } }
+
+/* notte: la parete delle borse del negozio a tutto schermo, il motto delle gift card sopra */
+.apri--notte { position: relative; height: calc(100dvh - var(--hdr)); min-height: 540px; max-height: 1040px; overflow: hidden; background: #0c0c0c; }
+.apri__sfondo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+.apri--notte::after { content: ""; position: absolute; inset: 30% 0 0; background: linear-gradient(rgba(12, 12, 12, 0), rgba(12, 12, 12, 0.92)); }
+.apri--notte .apri__t { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; display: grid; gap: 18px; padding-bottom: clamp(28px, 6vh, 64px); }
+.apri--notte .apri__h { font-size: clamp(58px, 9vw, 170px); line-height: 0.92; }
+.apri--notte .apri__h span:not(.sr) { color: var(--acc); }
+.apri--notte .apri__sub { color: #dcd8cf; font-size: 18px; }
+
+/* le campagne delle marche: foto larga e il nome sotto (le foto hanno già il logo della marca dentro) */
+.storie { padding-top: 88px; }
+.storie__g { display: grid; gap: 28px 12px; }
+.camp { display: grid; gap: 12px; text-decoration: none; }
+.camp__img { display: block; overflow: hidden; background: var(--tile); }
+.camp__img img { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; transition: transform 0.9s var(--ease); }
+.camp__t { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.camp__m { font-size: clamp(26px, 2.4vw, 40px); line-height: 1.1; }
+.camp:hover .camp__m { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+@media (min-width: 760px) {
+  .storie { padding-top: 112px; }
+  .storie__g { grid-template-columns: 1fr 1fr; gap: 40px 16px; }
+  .camp__img img { aspect-ratio: 3.2 / 1; }
+  .storie--2 .camp__img img { aspect-ratio: 16 / 9; }
+}
+@media (hover: hover) and (pointer: fine) { .camp:hover .camp__img img { transform: scale(1.02); } }
 
 /* outlet: la foto di campagna del negozio e il testo accanto */
 .banda { max-width: var(--max); margin: 88px auto 0; padding-inline: var(--gut); display: grid; gap: 24px; }
@@ -519,8 +571,8 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 @media (min-width: 760px) { .tessere--hub { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 36px 16px; } }
 @media (min-width: 1120px) { .tessere--hub { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 /* "Vedi tutto": un riquadro della stessa misura delle foto, col testo in basso */
-.tessera--tutto { aspect-ratio: 2 / 3; align-content: end; gap: 6px; padding: 18px; background: var(--tile); }
-.tessera--tutto .tessera__t { font-size: 20px; font-weight: 300; letter-spacing: 0.06em; margin: 0; }
+.tessera--tutto { aspect-ratio: 2 / 3; align-content: end; gap: 6px; padding: 18px; background: var(--bg-2); box-shadow: inset 0 0 0 1px var(--line); }
+.tessera--tutto .tessera__t { font-size: 26px; line-height: 1.05; margin: 0; }
 .tessera--tutto .ico { width: 18px; height: 18px; margin-top: 8px; transition: transform 0.25s var(--ease); }
 .tessera--tutto:hover .ico { transform: translateX(4px); }
 .tessera--tutto:hover .tessera__t { text-decoration: none; }
@@ -549,7 +601,7 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .pdp__info { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-content: start; min-width: 0; }
 .pdp__marca a { text-decoration: none; }
 .pdp__marca a:hover { text-decoration: underline; }
-.pdp__nome { font-size: clamp(24px, 2.2vw, 32px); font-weight: 300; line-height: 1.2; text-wrap: balance; margin-top: -8px; }
+.pdp__nome { font-size: clamp(28px, 2.4vw, 40px); line-height: 1.12; margin-top: -8px; }
 .pdp__prezzo { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 19px; }
 .pdp__iva { font-size: 13px; color: var(--ink-2); }
 .pdp__lbl { font-size: 14px; color: var(--ink-2); }
@@ -658,20 +710,20 @@ dialog.zoom { margin: 0; padding: 0; border: 0; width: 100vw; height: 100dvh; ma
 .seg [aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 /* le marche grandi quanto i capi che hanno: maiuscolo leggero, allineate a sinistra */
 .bill--pagina { padding: 28px 0 32px; border-top: 1px solid var(--ink); }
-.bill__lista { line-height: 1.12; text-transform: uppercase; }
-.bl { display: inline-block; margin-right: 0.45em; text-decoration: none; font-weight: 300; letter-spacing: 0.02em; }
+.bill__lista { line-height: 1.12; }
+.bl { display: inline-block; margin-right: 0.45em; text-decoration: none; }
 .bl:hover { text-decoration: underline; text-decoration-thickness: 1px; }
 .bl sup { font-size: max(11px, 0.28em); font-weight: 400; margin-left: 0.15em; color: var(--ink-2); letter-spacing: 0; }
 .bl--l { font-size: clamp(30px, 6.4vw, 76px); }
 .bl--m { font-size: clamp(22px, 4.2vw, 46px); }
 .bl--s { font-size: clamp(18px, 2.8vw, 30px); }
-.bl--xs { font-size: clamp(15px, 2vw, 20px); font-weight: 400; }
-.bl--xxs { font-size: 15px; font-weight: 400; letter-spacing: 0.04em; }
+.bl--xs { font-size: clamp(16px, 2vw, 22px); }
+.bl--xxs { font-size: 16px; font-family: var(--font); font-style: normal; }
 .az__salti { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 16px; position: sticky; top: var(--hdr); background: var(--bg); padding: 8px 0; z-index: 5; }
 .az__salti a { min-width: 36px; min-height: 40px; display: grid; place-items: center; text-decoration: none; font-weight: 500; border: 1px solid var(--line); }
 .az__salti a:hover { background: var(--ink); color: var(--bg); }
 .az__g { padding: 18px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 56px 1fr; gap: 12px; }
-.az__l { font-size: 30px; font-weight: 300; line-height: 1; }
+.az__l { font-size: 34px; line-height: 1; }
 .az__g ul { columns: 2 180px; column-gap: 28px; }
 .az__g a { display: block; padding: 6px 0; text-decoration: none; }
 .az__g a:hover { text-decoration: underline; }
@@ -735,6 +787,65 @@ dialog.zoom { margin: 0; padding: 0; border: 0; width: 100vw; height: 100dvh; ma
 .tema { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; }
 .tema button { min-height: 36px; padding: 0 12px; border: 1px solid currentColor; font-size: 13px; }
 .tema [aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+/* ========================================================== LE TRE VERSIONI */
+/* casa: pietra chiara e verde scuro, Libre Caslon per i titoli e Karla per il testo.
+   Contrasti: testo secondario 6,9:1 sulla pagina, verde 11:1, bordi dei controlli 3,4:1 */
+:root[data-tema="casa"] {
+  --bg: #f6f5f1; --bg-2: #ecebe5; --tile: #e9e8e3; --pietra: #e7e4dc;
+  --ink: #1c1c1a; --ink-2: #57574f; --line: #dcd9d0; --line-3: #8a887f;
+  --acc: #1f3b2d; --acc-ink: #ffffff; --acc-hover: #2e5542; --sale: #a8261b; --focus: #1f3b2d;
+  --font: "Karla", system-ui, sans-serif; --disp: "Libre Caslon Display", Georgia, serif;
+  --h-track: -0.005em; --h-color: var(--acc);
+}
+[data-tema="casa"] .btn--linea { border-color: var(--acc); color: var(--acc); }
+[data-tema="casa"] .btn--linea:hover { background: var(--acc); color: var(--acc-ink); }
+[data-tema="casa"] .btn, [data-tema="casa"] .link-freccia { letter-spacing: 0.08em; }
+[data-tema="casa"] .link-freccia { color: var(--acc); }
+@media (min-width: 1120px) {
+  /* il logo a sinistra e i reparti accanto, come l'insegna di un negozio */
+  [data-tema="casa"] .hdr__bar { grid-template-columns: auto minmax(0, 1fr) auto; gap: 40px; }
+  [data-tema="casa"] .hdr__logo { grid-column: 1; }
+  [data-tema="casa"] .nav { grid-column: 2; margin-left: 0; }
+  [data-tema="casa"] .nav__link { text-transform: none; letter-spacing: 0.01em; font-size: 15px; }
+}
+
+/* rivista: bianco e nero col rosso, Bodoni corsivo per i titoli e Figtree per il testo.
+   Contrasti: rosso 5,5:1 sulla pagina, testo secondario 6,9:1 */
+:root[data-tema="rivista"] {
+  --bg: #fbfaf7; --bg-2: #f1efe9; --tile: #ebeae6;
+  --ink: #111111; --ink-2: #57574f; --line: #e3e1db; --line-3: #8b8a84;
+  --acc: #111111; --acc-ink: #ffffff; --acc-hover: #3a3a38; --sale: #c0231a; --focus: #111111;
+  --font: "Figtree", system-ui, sans-serif; --disp: "Bodoni Moda", "Didot", Georgia, serif;
+  --h-style: italic; --h-track: -0.01em;
+}
+[data-tema="rivista"] .hdr { border-bottom-color: var(--ink); }
+[data-tema="rivista"] .apri--rivista .apri__t { border-bottom: 0; }
+@media (min-width: 1120px) {
+  :root[data-tema="rivista"] { --hdr: 84px; }
+  [data-tema="rivista"] .hdr__logo img { width: 196px; }
+}
+
+/* notte: fondo scuro e oro (i colori delle gift card), Italiana per i titoli e Work Sans per il testo.
+   I riquadri delle foto restano chiari: i capi fotografati su fondo bianco si leggono solo lì.
+   Contrasti: testo 15:1, testo secondario 8:1, oro 8,4:1, prezzi scontati 7,6:1, bordi dei controlli 4:1 */
+:root[data-tema="notte"] {
+  --bg: #151515; --bg-2: #1f1f1e; --tile: #dcdad5;
+  --ink: #f1efe9; --ink-2: #aeaaa1; --line: #33322f; --line-3: #7b786f;
+  --acc: #c9a45c; --acc-ink: #151515; --acc-hover: #dcbb78; --sale: #f0907f; --focus: #f1efe9;
+  --scrim: rgba(0, 0, 0, 0.62);
+  --font: "Work Sans", system-ui, sans-serif; --disp: "Italiana", "Didot", Georgia, serif;
+  --h-track: 0.01em; --logo-filter: invert(1);
+  color-scheme: dark;
+}
+[data-tema="notte"] .btn--linea { border-color: var(--acc); color: var(--acc); }
+[data-tema="notte"] .btn--linea:hover { background: var(--acc); color: var(--acc-ink); }
+[data-tema="notte"] .btn { letter-spacing: 0.16em; }
+[data-tema="notte"] .card__m, [data-tema="notte"] .pdp__marca a { color: var(--acc); }
+[data-tema="notte"] .apri__cta .btn--linea { background: rgba(12, 12, 12, 0.35); }
+/* disegni dentro il foglio di stile: il segno di spunta e la freccia della tendina, chiari sul fondo scuro */
+[data-tema="notte"] .fg__l input:checked + label::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23151515' stroke-width='3'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E"); }
+[data-tema="notte"] .ordina select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f1efe9' stroke-width='1.4'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
