@@ -2,7 +2,8 @@
    Parmax: sistema di design
    Codice di Emanuele Parmegiani.
    Due versioni sugli stessi componenti, scelte con data-tema su <html>:
-   - classica: il marchio di oggi, bianco e nero, Work Sans;
+   - classica: il marchio di oggi, bianco e nero, Work Sans; titoli grandi in Playfair Display,
+     il carattere che parmax.com usa nel riquadro "La nostra storia";
    - rinnovata: il cartellone delle marche, blu cobalto pieno nelle zone "manifesto",
      bianco dove ci sono le foto (i colori dei capi restano veri), Archivo da stretto a normale.
    Telefono < 760 px, tablet 760-1119 px, computer >= 1120 px.
@@ -30,11 +31,12 @@
   --scrim: rgba(12, 12, 16, 0.5);
 
   --font: "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --d-font: "Playfair Display", Georgia, "Times New Roman", serif;
   --d-stretch: 100%;
-  --d-weight: 500;
+  --d-weight: 400;
   --d-case: none;
-  --d-track: -0.015em;
-  --d-line: 1.08;
+  --d-track: -0.01em;
+  --d-line: 1.1;
   --lbl-stretch: 100%;
   --lbl-weight: 500;
   --lbl-track: 0.08em;
@@ -60,6 +62,7 @@
   --ftr-ink-2: #dde2ff;
 
   --font: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --d-font: var(--font);
   --d-stretch: 62%;
   --d-weight: 800;
   --d-case: uppercase;
@@ -116,6 +119,7 @@ ul, ol { padding: 0; list-style: none; }
 
 /* titoli: nella rinnovata, Archivo strettissimo e maiuscolo come un cartellone */
 .h1, .h2, .hero-c__h, .pdp__nome, .panel__title {
+  font-family: var(--d-font);
   font-stretch: var(--d-stretch);
   font-weight: var(--d-weight);
   text-transform: var(--d-case);
@@ -428,7 +432,7 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .hero-c__img a:focus-visible img { outline: 3px solid #fff; outline-offset: -8px; }
 .hero-c__img img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
 .hero-c__t { padding: 24px var(--gut) 8px; display: grid; gap: 14px; align-content: center; }
-.hero-c__h { font-size: clamp(32px, 8.5vw, 60px); font-weight: 500; }
+.hero-c__h { font-size: clamp(32px, 8.5vw, 60px); }
 .hero-c__sub { color: var(--ink-2); font-size: 16px; max-width: 46ch; }
 .porte { border-top: 1px solid var(--ink); margin-top: 6px; }
 .porte a {
@@ -665,8 +669,8 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .pdp__marca a { color: var(--ink-2); text-decoration: none; }
 .pdp__marca a:hover { text-decoration: underline; color: var(--ink); }
 .pdp__marca { font-size: 13px; }
-.pdp__nome { font-size: clamp(24px, 6vw, 34px); font-weight: 500; }
-[data-tema="rinnovata"] .pdp__nome { font-size: clamp(34px, 8.6vw, 52px); }
+.pdp__nome { font-size: clamp(24px, 6vw, 34px); }
+[data-tema="rinnovata"] .pdp__nome { font-size: clamp(34px, 8.6vw, 52px); font-weight: 500; }
 .pdp__prezzo { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 22px; }
 .pdp__iva { font-size: 13px; color: var(--ink-2); }
 .pdp__lbl { font-size: 15px; color: var(--ink-2); }
