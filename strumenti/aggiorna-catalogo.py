@@ -20,6 +20,9 @@ Formato di ogni prodotto in PRODOTTI.p (chiavi corte perché i prodotti sono ~2.
     v  taglie disponibili: [id variante, taglia] o [id variante, taglia, colore]
     i  prime due foto (percorso dopo PRODOTTI.img)    d  data di pubblicazione
     q  numero del modello: stesso numero = stesso capo in altri colori
+    b  1 se la seconda foto (il capo indossato) ha il fondo bianco invece del grigio da studio:
+       la versione "rivista" non la usa in copertina e nei servizi, dove le foto stanno una accanto all'altra.
+       Solo per le novità, e solo se c'è Pillow (pip install pillow); senza, il sito funziona lo stesso.
 """
 
 import datetime
@@ -31,6 +34,7 @@ import re
 import sys
 import time
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 
 NEGOZIO = "https://parmax.com"
 TRUSTINDEX = "https://cdn.trustindex.io/widgets/6e/6efc73173ecf54935166fd75325/content.html"
@@ -147,6 +151,35 @@ def compatta(p):
     return r
 
 
+def segna_fondi_bianchi(prodotti):
+    """Guarda gli angoli della foto indossata delle novità (in piccolo, 40 px): se sono quasi bianchi, b = 1."""
+    try:
+        from PIL import Image
+        import io
+    except ImportError:
+        print("  ! Pillow non c'è: fondi delle foto non controllati")
+        return 0
+
+    def bianco(r):
+        try:
+            req = urllib.request.Request(IMG + r["i"][1] + "?width=40", headers={"User-Agent": "Mozilla/5.0 (aggiorna-catalogo Parmax)"})
+            with urllib.request.urlopen(req, timeout=30) as f:
+                im = Image.open(io.BytesIO(f.read())).convert("L")
+            w, h = im.size
+            angoli = [im.getpixel((x, y)) for x, y in [(1, 1), (w - 2, 1), (1, h // 2), (w - 2, h // 2)]]
+            return sum(angoli) / len(angoli) > 238
+        except Exception:
+            return False
+
+    da_vedere = [r for r in prodotti if r.get("n") and len(r["i"]) > 1]
+    with ThreadPoolExecutor(8) as ex:
+        esiti = list(ex.map(bianco, da_vedere))
+    for r, b in zip(da_vedere, esiti):
+        if b:
+            r["b"] = 1
+    return sum(esiti)
+
+
 def recensioni():
     """Le ultime recensioni Google mostrate dal widget Trustindex del sito attuale."""
     try:
@@ -204,6 +237,7 @@ def main():
                 r["q"] = n
 
     prodotti.sort(key=lambda r: r["d"], reverse=True)
+    bianchi = segna_fondi_bianchi(prodotti)
     dati = {
         "aggiornato": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M"),
         "img": IMG,
@@ -220,7 +254,7 @@ def main():
             + "window.PRODOTTI=" + testo + ";\n"
         )
     print(f"Fatto: {len(prodotti)} prodotti su {len(tutti)}, {n} modelli in più colori, "
-          f"{len(dati['recensioni']['elenco'])} recensioni, {len(testo) // 1024} KB -> {os.path.normpath(USCITA)}")
+          f"{bianchi} novità con la foto indossata su fondo bianco, {len(dati['recensioni']['elenco'])} recensioni, {len(testo) // 1024} KB -> {os.path.normpath(USCITA)}")
 
 
 if __name__ == "__main__":
