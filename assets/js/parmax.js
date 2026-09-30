@@ -986,13 +986,14 @@ ${
       });
   }
 
-  /* hero "classica": le due foto di campagna del negozio (portano alle novità di donna e di uomo) e le quattro porte */
+  /* hero "classica": le due foto di campagna del negozio (portano alle novità di donna e di uomo) e le quattro porte.
+     Le foto sono quadrate e riempiono un riquadro più alto che largo: la misura da scaricare è l'altezza del riquadro */
   function heroClassica(tot) {
     return `<section class="hero-c" aria-labelledby="t-hero">
   <div class="hero-c__img">${["donna", "uomo"]
     .map(
       (g) =>
-        `<a href="elenco.html?s=novita&gen=${g}"><img src="${foto(N.foto.campagna[g], 900)}" srcset="${srcset(N.foto.campagna[g], [400, 600, 900, 1254])}" sizes="(min-width:760px) 27vw, 50vw" alt="Novità ${g}" width="900" height="900" fetchpriority="high"></a>`
+        `<a href="elenco.html?s=novita&gen=${g}"><img src="${foto(N.foto.campagna[g], 900)}" srcset="${srcset(N.foto.campagna[g], [400, 600, 900, 1254])}" sizes="(min-width:1000px) 55vw, (min-width:760px) 58vw, 80vw" alt="Novità ${g}" width="900" height="900" fetchpriority="high"></a>`
     )
     .join("")}</div>
   <div class="hero-c__t">
