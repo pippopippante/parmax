@@ -1,0 +1,5 @@
+# cose di lavoro, fuori dal sito
+.playwright-cli/
+.impeccable/
+.axe-tmp.js
+__pycache__/

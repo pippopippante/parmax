@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="it">
+<head>
+<!-- Parmax. Codice di Emanuele Parmegiani. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chi siamo | Parmax</title>
+<meta name="description" content="Parmax, dal 1985 nel centro storico di Spoleto: lo store L’Arca, l’outlet in Via dei Tessili e l’e-commerce dal 2012.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Parmax">
+<meta property="og:title" content="Chi siamo | Parmax">
+<meta property="og:description" content="Parmax, dal 1985 nel centro storico di Spoleto: lo store L’Arca, l’outlet in Via dei Tessili e l’e-commerce dal 2012.">
+<meta property="og:image" content="https://cdn.shopify.com/s/files/1/0773/5364/8412/files/Parmax.com_L_Arca_Spoleto_Shop.png?width=1200">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/img/favicon-48.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://cdn.shopify.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script>
+/* versione da mostrare: ?tema=classica o ?tema=rinnovata, ricordata nel browser; carica solo il suo carattere */
+(function () {
+  var t, d = document.documentElement;
+  try { t = new URLSearchParams(location.search).get("tema"); if (t) localStorage.setItem("parmax:tema", t); else t = localStorage.getItem("parmax:tema"); } catch (e) {}
+  t = t === "rinnovata" ? "rinnovata" : "classica";
+  d.dataset.tema = t;
+  var l = document.createElement("link");
+  l.rel = "stylesheet";
+  l.href = t === "rinnovata" ? "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" : "https://fonts.googleapis.com/css2?family=Work+Sans:wght@400..700&display=swap";
+  document.head.appendChild(l);
+})();
+</script>
+<link rel="stylesheet" href="assets/css/parmax.css">
+</head>
+<body data-pagina="storia">
+<main id="main">
+<nav class="bc wrap" aria-label="Sei qui"><ol><li><a href="index.html">Home</a></li><li><span aria-current="page">Chi siamo</span></li></ol></nav>
+<div class="storia wrap">
+  <div class="storia__img"><img src="https://cdn.shopify.com/s/files/1/0773/5364/8412/files/Parmax.com_L_Arca_Spoleto_Shop.png?width=1000" srcset="https://cdn.shopify.com/s/files/1/0773/5364/8412/files/Parmax.com_L_Arca_Spoleto_Shop.png?width=600 600w, https://cdn.shopify.com/s/files/1/0773/5364/8412/files/Parmax.com_L_Arca_Spoleto_Shop.png?width=1000 1000w, https://cdn.shopify.com/s/files/1/0773/5364/8412/files/Parmax.com_L_Arca_Spoleto_Shop.png?width=1400 1400w" sizes="(min-width:1120px) 45vw, 100vw" alt="L'interno del negozio L'Arca a Spoleto, con le volte affrescate" width="1000" height="1333"></div>
+  <div class="storia__t">
+    <h1 class="h1">Chi siamo</h1>
+    <p class="storia__sub">Dal 1985, una storia di eleganza italiana</p>
+    <p>Parmax è molto più di una boutique: è un viaggio nel mondo della moda, radicato nel cuore del centro storico di Spoleto.</p>
+    <p>Su una superficie di 350 m² nello store L’Arca Spoleto e 600 m² nel nostro esclusivo outlet Parmax, offriamo un’esperienza di shopping unica, dove storia, design e tendenze contemporanee si incontrano in perfetto equilibrio.</p>
+    <p>Collaboriamo con oltre 80 brand di eccellenza, selezionati con cura per uomo, donna e, nel nostro outlet, anche per bambino.</p>
+    <p>Le relazioni storiche costruite con i marchi più prestigiosi ci permettono di proporre ogni stagione una collezione sempre attuale, autentica e all’avanguardia.</p>
+    <p>Dal 2012, con il nostro e-commerce Parmax.com, portiamo l’esperienza boutique direttamente a casa tua, servendo con orgoglio tutta l’Italia e l’Europa.</p>
+    <p>Unendo qualità, velocità e attenzione al cliente, garantiamo un servizio impeccabile, con prodotti già disponibili a magazzino e spediti in 48 ore.</p>
+    <p>Ogni spazio, fisico e digitale, è pensato per offrirti comfort, stile e ispirazione, riflettendo il nostro costante impegno nel valorizzare l’essenza della moda italiana.</p>
+    <p>Ti aspettiamo nei nostri store di Spoleto, per vivere un’esperienza di shopping unica, magnifica e ricca di storia.</p>
+    <p>Nel frattempo, scopri online la nuova collezione già scontata, pronta per raggiungerti direttamente a casa tua.</p>
+    <ul class="negozi__l">
+      <li><svg class="ico" aria-hidden="true"><use href="#i-pin"></use></svg><span><strong>L’Arca Spoleto</strong> Via Corso Garibaldi 23/26, Spoleto (PG)<br><a href="https://www.google.com/maps/search/?api=1&amp;query=L%27Arca+Spoleto+Corso+Garibaldi+Spoleto" target="_blank" rel="noopener">Mappa<span class="sr"> (si apre in una nuova scheda)</span></a></span></li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-pin"></use></svg><span><strong>Parmax Outlet</strong> Via dei Tessili 5, Spoleto (PG)<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Parmax+Outlet+Via+dei+Tessili+5+Spoleto" target="_blank" rel="noopener">Mappa<span class="sr"> (si apre in una nuova scheda)</span></a></span></li>
+    </ul>
+    <p><a class="link-freccia" href="elenco.html?s=novita">Scopri le novità</a></p>
+  </div>
+</div>
+</main>
+<script src="assets/js/catalogo.js"></script>
+<script src="assets/js/prodotti.js"></script>
+<script src="assets/js/parmax.js"></script>
+</body>
+</html>

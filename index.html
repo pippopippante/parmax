@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="it">
+<head>
+<!-- Parmax. Codice di Emanuele Parmegiani. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parmax | Abbigliamento firmato uomo e donna da Spoleto</title>
+<meta name="description" content="Boutique multimarca di Spoleto dal 1985: abbigliamento firmato per uomo e donna, outlet fino al -70%. Spedizione gratuita in Italia sopra 100 euro.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Parmax">
+<meta property="og:title" content="Parmax | Abbigliamento firmato uomo e donna da Spoleto">
+<meta property="og:description" content="Boutique multimarca di Spoleto dal 1985: abbigliamento firmato per uomo e donna, outlet fino al -70%. Spedizione gratuita in Italia sopra 100 euro.">
+<meta property="og:image" content="https://cdn.shopify.com/s/files/1/0773/5364/8412/files/Parmax.com_L_Arca_Spoleto_Shop.png?width=1200">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/img/favicon-48.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://cdn.shopify.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script>
+/* versione da mostrare: ?tema=classica o ?tema=rinnovata, ricordata nel browser; carica solo il suo carattere */
+(function () {
+  var t, d = document.documentElement;
+  try { t = new URLSearchParams(location.search).get("tema"); if (t) localStorage.setItem("parmax:tema", t); else t = localStorage.getItem("parmax:tema"); } catch (e) {}
+  t = t === "rinnovata" ? "rinnovata" : "classica";
+  d.dataset.tema = t;
+  var l = document.createElement("link");
+  l.rel = "stylesheet";
+  l.href = t === "rinnovata" ? "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" : "https://fonts.googleapis.com/css2?family=Work+Sans:wght@400..700&display=swap";
+  document.head.appendChild(l);
+})();
+</script>
+<link rel="stylesheet" href="assets/css/parmax.css">
+</head>
+<body data-pagina="home">
+<main id="main"><noscript><p class="wrap caricamento">Per vedere i prodotti serve JavaScript attivo nel browser. Puoi chiamarci al +39 0743 225664 o scriverci a clienti@parmax.com.</p></noscript></main>
+<script src="assets/js/catalogo.js"></script>
+<script src="assets/js/prodotti.js"></script>
+<script src="assets/js/parmax.js"></script>
+</body>
+</html>
