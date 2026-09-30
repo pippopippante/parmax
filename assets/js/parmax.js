@@ -1144,14 +1144,23 @@ ${
       const ta = ordinaTaglie(Array.from(nt.keys()).filter((k) => k[0] === "a").map((k) => k.slice(2)));
       const ts = ordinaTaglie(Array.from(nt.keys()).filter((k) => k[0] === "s").map((k) => k.slice(2)));
       const taglieOpz = (pref, arr) => arr.map((z) => [pref + z, z, nt.get(pref + z)]);
+      /* lettere (XS-XL) e numeri (38-50, K-Way 5-8) in due gruppi: tutte insieme erano un mucchio */
+      const lettere = ta.filter((z) => !/^\d/.test(z));
+      const numeri = ta.filter((z) => /^\d/.test(z));
+      const sotto =
+        ta.length && ts.length
+          ? [["Abbigliamento e accessori", taglieOpz("a:", ta)], ["Scarpe", taglieOpz("s:", ts)]]
+          : lettere.length && numeri.length
+            ? [["Lettere", taglieOpz("a:", lettere)], ["Numeri", taglieOpz("a:", numeri)]]
+            : null;
       if (ta.length || ts.length)
         out.push({
           k: "t",
           nome: "Taglia",
           aperto: true,
           griglia: true,
-          sotto: ta.length && ts.length ? [["Abbigliamento e accessori", taglieOpz("a:", ta)], ["Scarpe", taglieOpz("s:", ts)]] : null,
-          opz: ta.length && ts.length ? null : taglieOpz(ta.length ? "a:" : "s:", ta.length ? ta : ts)
+          sotto,
+          opz: sotto ? null : taglieOpz(ta.length ? "a:" : "s:", ta.length ? ta : ts)
         });
       const nm = conteggi("mk", (p) => [slug(p.m)]);
       if (nm.size > 1 || F.mk.size)
@@ -1676,7 +1685,7 @@ ${briciole(bc)}
     <div class="dubbi">
       <p class="dubbi__t">Dubbi? Chiedi al negozio</p>
       <p>${N.orari.map(esc).join(" · ")}</p>
-      <p class="dubbi__l"><a class="btn btn--linea" href="${wa(WA_SITO + ". Vorrei informazioni su: " + m.m + " " + nome)}" target="_blank" rel="noopener">${WA_ICO} WhatsApp${NUOVA_SCHEDA}</a><a class="btn btn--linea" href="${N.telHref}">${ico("phone")} Chiama</a></p>
+      <p class="dubbi__l"><a class="btn btn--linea" href="${wa(WA_SITO + ". Vorrei informazioni su: " + m.m + " " + nome)}" target="_blank" rel="noopener">${WA_ICO} WhatsApp${NUOVA_SCHEDA}</a><a class="dubbi__tel" href="${N.telHref}">${ico("phone")}<span><span class="sr">Chiama il </span>${esc(N.tel)}</span></a></p>
     </div>
   </div>
 </div>

@@ -528,6 +528,11 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .tessera--tutto .tessera__t { font-size: 20px; font-weight: 600; }
 [data-tema="rinnovata"] .tessera--tutto .tessera__t { font-stretch: 70%; text-transform: uppercase; font-size: 26px; font-weight: 800; line-height: 0.95; }
 .tessera--tutto .tessera__n { color: var(--poster-ink-2); }
+/* classica: "Vedi tutto" è un riquadro col solo bordo, così non pesa più di tutte le categorie insieme */
+:root:not([data-tema="rinnovata"]) .tessera--tutto { background: var(--bg); color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+:root:not([data-tema="rinnovata"]) .tessera--tutto .tessera__n { color: var(--ink-2); }
+:root:not([data-tema="rinnovata"]) .tessera--tutto:hover { background: var(--ink); color: var(--bg); }
+:root:not([data-tema="rinnovata"]) .tessera--tutto:hover .tessera__n { color: var(--poster-ink-2); }
 
 /* negozi */
 .negozi { display: grid; gap: 24px; padding-top: 64px; }
@@ -718,7 +723,10 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .dubbi__t { font-weight: 600; font-size: 17px; }
 .dubbi p:not(.dubbi__t):not(.dubbi__l) { font-size: 14px; color: var(--ink-2); }
 .dubbi__l { display: flex; flex-wrap: wrap; gap: 8px; }
+.dubbi__l { align-items: center; gap: 8px 18px; }
 .dubbi__l .btn { min-height: 44px; padding: 0 16px; }
+.dubbi__tel { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-weight: 600; }
+.dubbi__tel .ico { width: 18px; height: 18px; }
 
 @media (max-width: 759px) {
   /* telefono: "Aggiungi al carrello" sempre visibile in basso, in un posto solo (regola del metodo) */
@@ -776,7 +784,8 @@ dialog.zoom { margin: 0; padding: 0; border: 0; width: 100vw; height: 100dvh; ma
 :root:not([data-tema="rinnovata"]) .bill--pagina { background: var(--bg); color: var(--ink); --focus: var(--ink); border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); margin-inline: 0; padding-inline: 0; }
 :root:not([data-tema="rinnovata"]) .bill--pagina a:hover { background: var(--ink); color: var(--bg); }
 .bill__lista { text-align: justify; line-height: 1.02; text-transform: uppercase; font-stretch: 62%; }
-:root:not([data-tema="rinnovata"]) .bill__lista { font-stretch: 100%; text-transform: none; letter-spacing: -0.01em; line-height: 1.12; }
+/* classica: nomi allineati a sinistra (allargati per riempire la riga lasciavano buchi fra una marca e l'altra) */
+:root:not([data-tema="rinnovata"]) .bill__lista { font-stretch: 100%; text-transform: none; letter-spacing: -0.01em; line-height: 1.12; text-align: left; }
 .bl { display: inline-block; margin-right: 0.28em; }
 .bl sup { font-size: max(11px, 0.3em); font-weight: 600; font-stretch: 100%; margin-left: 0.1em; color: var(--poster-ink-2); letter-spacing: 0; }
 :root:not([data-tema="rinnovata"]) .bl sup { color: var(--ink-2); }
@@ -869,6 +878,7 @@ dialog.zoom { margin: 0; padding: 0; border: 0; width: 100vw; height: 100dvh; ma
   .riga__n, .riga__p, .somma, .cerca__n, .toast, .zona__paesi, .contatto p, .ftr__col li, .ftr__servizi span { font-size: 16px; }
   .fg__l--griglia label { font-size: 15px; }
   .dubbi p:not(.dubbi__t):not(.dubbi__l) { font-size: 15px; }
+  :root:not([data-tema="rinnovata"]) .bl--xxs { font-size: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
