@@ -420,10 +420,14 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .bc [aria-current] { color: var(--ink); }
 
 /* =================================================================== HOME */
-/* classica: foto vera del negozio e porte d'ingresso */
+/* classica: le due foto di campagna affiancate e le porte d'ingresso */
 .hero-c { display: grid; }
-.hero-c__img { height: min(46vh, 380px); overflow: hidden; background: var(--bg-2); }
-.hero-c__img img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; }
+.hero-c__img { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: min(46vh, 380px); overflow: hidden; background: var(--bg-2); }
+.hero-c__img a { display: block; min-height: 0; overflow: hidden; }
+/* fuoco dentro la foto, nero e bianco insieme: si vede sia sul chiaro sia sullo scuro */
+.hero-c__img a:focus-visible { outline-offset: -5px; }
+.hero-c__img a:focus-visible img { outline: 3px solid #fff; outline-offset: -8px; }
+.hero-c__img img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
 .hero-c__t { padding: 24px var(--gut) 8px; display: grid; gap: 14px; align-content: center; }
 .hero-c__h { font-size: clamp(32px, 8.5vw, 60px); font-weight: 500; }
 .hero-c__sub { color: var(--ink-2); font-size: 16px; max-width: 46ch; }
@@ -436,14 +440,21 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .porte .ico { transition: transform 0.25s var(--ease); }
 .porte a:hover .ico { transform: translateX(4px); }
 .porte a:hover > span:first-child { text-decoration: underline; text-decoration-thickness: 1px; }
+/* tablet in piedi: foto sopra come su telefono, un po' più alte. Affiancate al testo solo da 1000 px:
+   più strette di così le foto verrebbero tagliate ai lati e la scritta "NEW IN" che hanno dentro non si leggerebbe */
 @media (min-width: 760px) {
-  .hero-c { grid-template-columns: 1fr 1fr; min-height: min(78vh, 720px); }
-  .hero-c__img { height: auto; order: 2; }
-  .hero-c__t { padding: 48px var(--gut); }
+  .hero-c__img { height: min(44vh, 460px); }
+  .hero-c__t { padding: 32px var(--gut) 8px; }
+}
+@media (min-width: 1000px) {
+  .hero-c { grid-template-columns: 1fr 1.1fr; }
+  /* la colonna delle foto è larga il 52% dello schermo: alta almeno altrettanto, ma mai più dello schermo */
+  .hero-c__img { order: 2; height: auto; min-height: min(55vw, calc(100dvh - var(--hdr))); }
+  .hero-c__t { padding: 40px var(--gut); }
+  .hero-c__h { font-size: clamp(50px, 4.7vw, 60px); }
 }
 @media (min-width: 1120px) {
-  .hero-c { grid-template-columns: 1fr 1.1fr; }
-  .hero-c__t { padding: 56px 64px 56px max(var(--gut), calc((100vw - 1480px) / 2 + var(--gut))); gap: 20px; }
+  .hero-c__t { padding: clamp(40px, 4.4vw, 56px) 64px clamp(40px, 4.4vw, 56px) max(var(--gut), calc((100vw - 1480px) / 2 + var(--gut))); gap: 20px; }
   .porte a { min-height: 72px; }
   .porte a > span:first-child { font-size: 30px; }
 }

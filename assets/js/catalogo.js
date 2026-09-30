@@ -35,7 +35,12 @@ window.CATALOGO = {
     foto: {
       negozio: "Parmax.com_L_Arca_Spoleto_Shop.png",
       outlet: "banner_home_parmax_k-way_outlet.jpg",
-      outletVerticale: "banner_home_outlet_9-16_parmax_k-way.jpg"
+      outletVerticale: "banner_home_outlet_9-16_parmax_k-way.jpg",
+      /* le due foto che aprono la home di parmax.com (hanno la scritta "NEW IN DONNA / UOMO" dentro l'immagine):
+         il negozio le cambia a ogni stagione, qui va aggiornato il nome del file */
+      campagna: { donna: "new-in-donna-fw27-parmax-abbigliamento.jpg", uomo: "new-in-uomo-fw27-parmax-abbigliamento.jpg" },
+      /* interno in bianco e nero, dal riquadro "La nostra storia" di parmax.com ("Oggi"): quale dei due negozi sia è da confermare */
+      negozioBn: "parmax-storia-spoleto.jpg"
     }
   },
 

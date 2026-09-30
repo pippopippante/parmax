@@ -947,7 +947,7 @@ ${rail("In outlet adesso", "elenco.html?s=outlet", outlet, "t-outr")}
   </div>
 </section>
 <section class="negozi wrap" aria-labelledby="t-neg">
-  <div class="negozi__img"><img src="${foto(N.foto.negozio, 900)}" srcset="${srcset(N.foto.negozio, [600, 900, 1200])}" sizes="(min-width:760px) 45vw, 100vw" alt="L'interno del negozio L'Arca a Spoleto: volte affrescate, tappeti e il bancone" width="900" height="1200" loading="lazy"></div>
+  <div class="negozi__img"><img src="${foto(N.foto.negozioBn, 900)}" srcset="${srcset(N.foto.negozioBn, [600, 900, 1086])}" sizes="(min-width:760px) 45vw, 100vw" alt="L'interno di uno dei negozi di Spoleto, in bianco e nero: capi appesi lungo le pareti e un divano al centro" width="900" height="1200" loading="lazy"></div>
   <div class="negozi__t">
     <h2 class="h1" id="t-neg">Due negozi a Spoleto</h2>
     <p>Dal 1985 nel cuore del centro storico di Spoleto: 350 m² nello store L'Arca e 600 m² nel nostro outlet. Online dal 2012.</p>
@@ -973,10 +973,15 @@ ${
 }`;
   }
 
-  /* hero "classica": la foto vera del negozio e le tre porte (Donna, Uomo, Outlet) */
+  /* hero "classica": le due foto di campagna del negozio (portano alle novità di donna e di uomo) e le quattro porte */
   function heroClassica(tot) {
     return `<section class="hero-c" aria-labelledby="t-hero">
-  <div class="hero-c__img"><img src="${foto(N.foto.negozio, 1200)}" srcset="${srcset(N.foto.negozio, [600, 900, 1200, 1600])}" sizes="(min-width:1120px) 50vw, 100vw" alt="Il negozio L'Arca a Spoleto" width="1200" height="1600" fetchpriority="high"></div>
+  <div class="hero-c__img">${["donna", "uomo"]
+    .map(
+      (g) =>
+        `<a href="elenco.html?s=novita&gen=${g}"><img src="${foto(N.foto.campagna[g], 900)}" srcset="${srcset(N.foto.campagna[g], [400, 600, 900, 1254])}" sizes="(min-width:760px) 27vw, 50vw" alt="Novità ${g}" width="900" height="900" fetchpriority="high"></a>`
+    )
+    .join("")}</div>
   <div class="hero-c__t">
     <h1 class="hero-c__h" id="t-hero">Abbigliamento firmato, da Spoleto</h1>
     <p class="hero-c__sub">Oltre 80 brand selezionati per uomo e donna, spediti dal nostro magazzino in 1-2 giorni lavorativi.</p>
