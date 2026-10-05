@@ -912,13 +912,15 @@ dialog.zoom { margin: 0; padding: 0; border: 0; width: 100vw; height: 100dvh; ma
   --ink: #111111; --ink-2: #57574f; --line: #e3e1db; --line-3: #8b8a84;
   --acc: #111111; --acc-ink: #ffffff; --acc-hover: #3a3a38; --sale: #c0231a; --focus: #111111;
   --font: "Figtree", system-ui, sans-serif; --disp: "Bodoni Moda", "Didot", Georgia, serif;
-  --h-track: -0.01em; --h-weight: 600;
+  --h-track: -0.01em; --h-weight: 500;
 }
-/* Bodoni più robusto: sui titoli grandi il carattere usa da solo la versione da manifesto, con le linee sottili
-   più fini di un pixel, che su uno schermo normale da computer diventano grigie e non si leggono (05/10/2026).
-   Il taglio pensato per i 24 px e il peso 600 tengono le linee sottili visibili a ogni misura. */
-[data-tema="rivista"] :is(.h1, .h2, .apri__h, .pdp__nome, .mega__all, .bl, .az__l, .vuoto__t, .tessera--tutto .tessera__t, .camp__m, .som__g, .firme__l) { font-variation-settings: "opsz" 24; }
-[data-tema="rivista"] :is(.som__g, .firme__l) { font-weight: 600; }
+/* Bodoni leggibile: sui titoli grandi il carattere usa da solo la versione da manifesto, con le linee sottili
+   più fini di un pixel, che su uno schermo normale da computer diventano grigie e non si leggono. Il primo
+   rimedio (taglio dei 24 px e peso 600) non bastava: il grassetto allarga la differenza fra linee spesse e
+   sottili, che è proprio quello che si legge peggio (Beier e Oderkerk 2021). Il taglio per i testi piccoli
+   (opsz 6) ha le linee sottili più spesse; peso 500 (05/10/2026, sera, scelta dell'utente fra tre prove). */
+[data-tema="rivista"] :is(.h1, .h2, .apri__h, .pdp__nome, .mega__all, .bl, .az__l, .vuoto__t, .tessera--tutto .tessera__t, .camp__m, .som__g, .firme__l) { font-variation-settings: "opsz" 6; }
+[data-tema="rivista"] :is(.som__g, .firme__l) { font-weight: 500; }
 /* i titoletti delle sezioni (Novità, In outlet adesso...) come le rubriche di un giornale: maiuscolo piccolo */
 [data-tema="rivista"] .h2 { font-family: var(--font); font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.4; }
 [data-tema="rivista"] .hdr { border-bottom-color: var(--ink); }
