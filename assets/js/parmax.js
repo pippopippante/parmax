@@ -904,10 +904,25 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
   const rail = (titolo, href, gruppi, id, lv, opzCard) =>
     gruppi.length
       ? `<section class="rail wrap" aria-labelledby="${id}">
-  <div class="rail__head"><h2 class="h2" id="${id}">${titolo}</h2>${href ? `<a class="link-freccia" href="${href}">Vedi tutti ${ico("right")}</a>` : ""}</div>
+  <div class="rail__head"><h2 class="h2" id="${id}">${titolo}</h2><div class="rail__az">${href ? `<a class="link-freccia" href="${href}">Vedi tutti ${ico("right")}</a>` : ""}<span class="rail__frecce"><button type="button" class="iconbtn" data-rail="-1" aria-label="${esc(titolo)}: indietro" disabled>${ico("left")}</button><button type="button" class="iconbtn" data-rail="1" aria-label="${esc(titolo)}: avanti">${ico("right")}</button></span></div></div>
   <div class="rail__track" tabindex="0" role="region" aria-label="${esc(titolo)}, scorri di lato">${gruppi.map((g) => scheda(g, Object.assign({ lv: lv || 3 }, opzCard))).join("")}</div>
 </section>`
       : "";
+  /* frecce delle strisce, solo col mouse (col dito si scorre): una pagina di schede intere per volta, spente agli estremi */
+  const frecceRail = (track) => {
+    const [ind, av] = $$("[data-rail]", track.closest(".rail"));
+    ind.disabled = track.scrollLeft <= 1;
+    av.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+  };
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-rail]");
+    if (!b) return;
+    const track = $(".rail__track", b.closest(".rail"));
+    const [a, c] = track.children;
+    const passo = c ? c.offsetLeft - a.offsetLeft : track.clientWidth;
+    track.scrollBy({ left: b.dataset.rail * passo * Math.max(1, Math.floor((track.clientWidth + passo - a.offsetWidth) / passo)), behavior: "smooth" });
+  });
+  document.addEventListener("scroll", (e) => e.target.classList && e.target.classList.contains("rail__track") && frecceRail(e.target), true);
 
   /* ------------------------------------------------------ pulsante carrello */
   /* "Aggiungi al carrello" e il contatore − n + stanno nella stessa scatola, che non cambia misura
@@ -1032,6 +1047,7 @@ ${rail("In outlet adesso", "elenco.html?s=outlet", outlet, "t-outr")}
 ${negoziHtml()}
 ${recensioniHtml()}`;
     initRecensioni(main);
+    $$(".rail__track", main).forEach(frecceRail);
   }
 
   /* Home delle tre versioni nuove: stessa ossatura, ognuna con la sua apertura e qualche sezione sua.
@@ -1110,6 +1126,7 @@ ${mezzo}
 ${negoziHtml()}
 ${recensioniHtml()}`;
     initRecensioni(main);
+    $$(".rail__track", main).forEach(frecceRail);
   }
 
   /* Home della versione "rivista", impaginata come un giornale di moda. Solo foto del negozio, tutte dello
