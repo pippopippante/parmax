@@ -551,7 +551,7 @@
     <form class="cerca wrap" action="elenco.html" role="search">
       ${ico("search")}
       <label class="sr" for="cerca-q">Cerca un capo, una marca o una categoria</label>
-      <input class="cerca__in" id="cerca-q" type="search" name="q" placeholder="Cerca: piumino, Pinko, jeans uomo…" autocomplete="off" data-fuoco>
+      <input class="cerca__in" id="cerca-q" type="search" name="q" placeholder="Piumino, Pinko, jeans uomo…" autocomplete="off" data-fuoco>
       <button type="button" class="iconbtn" data-chiudi aria-label="Chiudi la ricerca">${ico("close")}</button>
     </form>
     <div class="cerca__out wrap" data-cerca-out></div>

@@ -295,7 +295,7 @@ dialog.panel::backdrop, dialog.zoom::backdrop { background: var(--scrim); }
 .cerca__in::-webkit-search-cancel-button { display: none; }
 .cerca__out { padding-top: 16px; padding-bottom: 24px; display: grid; gap: 18px; max-height: calc(92dvh - 73px); overflow-y: auto; }
 /* su telefono i risultati arrivano fino in fondo allo schermo: sotto non spunta un pezzo di pagina */
-@media (max-width: 759px) { .panel--top { max-height: 100dvh; } .cerca__out { max-height: calc(100dvh - 73px); } }
+@media (max-width: 759px) { .panel--top { max-height: 100dvh; } .cerca__out { max-height: calc(100dvh - 73px); } .cerca__in { font-size: 18px; } }
 .cerca__h { color: var(--ink-2); margin-bottom: 8px; }
 .cerca__lista { display: grid; gap: 4px; }
 @media (min-width: 760px) { .cerca__lista { grid-template-columns: 1fr 1fr; gap: 8px 24px; } }

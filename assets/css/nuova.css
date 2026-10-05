@@ -232,7 +232,7 @@ dialog.panel::backdrop, dialog.zoom::backdrop { background: var(--scrim); }
 .cerca:focus-within { border-bottom-color: var(--ink); }
 .cerca__in::-webkit-search-cancel-button { display: none; }
 .cerca__out { padding-top: 18px; padding-bottom: 28px; display: grid; gap: 20px; max-height: calc(92dvh - 77px); overflow-y: auto; }
-@media (max-width: 759px) { .panel--top { max-height: 100dvh; } .cerca__out { max-height: calc(100dvh - 77px); } }
+@media (max-width: 759px) { .panel--top { max-height: 100dvh; } .cerca__out { max-height: calc(100dvh - 77px); } .cerca__in { font-size: 18px; } }
 .cerca__h { color: var(--ink-2); margin-bottom: 10px; }
 .cerca__lista { display: grid; gap: 6px; }
 @media (min-width: 760px) { .cerca__lista { grid-template-columns: 1fr 1fr; gap: 10px 28px; } }
