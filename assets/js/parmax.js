@@ -316,6 +316,8 @@
     const d = document.getElementById("pannello-" + nome);
     if (!d) return;
     $$("dialog[open]").forEach((x) => x !== d && x.close());
+    /* gli avvisi resterebbero sotto il velo del pannello: si tolgono (il lettore di schermo li ha già letti) */
+    $$(".toast").forEach((t) => t.remove());
     ultimoFocus = document.activeElement;
     if (!d.open) d.showModal();
     $$(`[aria-controls="pannello-${nome}"]`).forEach((b) => b.setAttribute("aria-expanded", "true"));
