@@ -399,8 +399,10 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .cop__cred { font-size: 13px; color: var(--ink-2); line-height: 1.4; }
 .cop__cred strong { color: var(--ink); font-weight: 600; margin-right: 4px; }
 .cop:hover .cop__cred { text-decoration: underline; }
-.apri--rivista .apri__t { display: grid; gap: 20px; align-content: start; }
-.apri--rivista .apri__h { font-size: clamp(46px, 5vw, 100px); line-height: 0.96; letter-spacing: -0.015em; }
+.apri--rivista .apri__t { display: grid; gap: 20px; align-content: start; container-type: inline-size; }
+/* la misura segue la colonna del testo, non la finestra: la colonna dipende anche dall'altezza dello schermo (le foto accanto
+   sono alte quanto lo schermo) e con la sola larghezza il titolo andava su tre righe, con "della" da solo */
+.apri--rivista .apri__h { font-size: min(clamp(46px, 5vw, 100px), 15cqi); line-height: 0.96; letter-spacing: -0.015em; }
 .som { display: grid; gap: 14px; border-top: 1px solid var(--ink); padding-top: 12px; margin-top: 8px; }
 .som__h { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
 .som__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px 32px; }
