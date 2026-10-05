@@ -1769,9 +1769,12 @@ ${briciole([["Home", "index.html"], [C.generi[s], ""]])}
           .join("")}</ul></div>`
       : "";
 
-    const fotoLista = m.foto.length ? m.foto : [];
-    /* quali foto sono il capo da solo su fondo bianco: la prima, o tutte per scarpe e accessori */
-    const ritaglio = (i) => i === 0 || !INDOSSATI.has(m.c);
+    /* nelle versioni nuove i vestiti si aprono sulla foto indossata, la stessa della scheda nell'elenco
+       (il negozio la carica per seconda); il capo da solo viene subito dopo */
+    const indossataPrima = NUOVE.has(tema()) && INDOSSATI.has(m.c) && m.foto.length > 1;
+    const fotoLista = indossataPrima ? [m.foto[1], m.foto[0], ...m.foto.slice(2)] : m.foto.slice();
+    /* quali foto sono il capo da solo su fondo bianco: quella che il negozio carica per prima, o tutte per scarpe e accessori */
+    const ritaglio = (i) => !INDOSSATI.has(m.c) || i === (indossataPrima ? 1 : 0);
     const etichetta = m.etichetta || "Taglia";
 
     const fit = m.det && m.det.fit ? m.det.fit.replace(/<\/?p>/g, " ").trim() : "";
@@ -1882,7 +1885,7 @@ ${briciole(bc)}
     const box = $("[data-addq]", main);
     const riga = (v) => ({
       v: v.id, h: m.h, t: m.t, m: m.m, k: multi ? scelta.colore : colorePrincipale(m), z: v.taglia === "TU" ? "taglia unica" : v.taglia,
-      etichetta, p: v.p, r: m.r || 0, x: m.x || [], i: m.foto[0] || ""
+      etichetta, p: v.p, r: m.r || 0, x: m.x || [], i: fotoLista[0] || ""
     });
     if (box) {
       box.dataset.v = scelta.id || "";
