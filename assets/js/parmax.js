@@ -84,6 +84,8 @@
 
   /* --------------------------------------------------------------- indici */
   const perHandle = new Map(P.map((p) => [p.h, p]));
+  /* un capo è un modello: i colori dello stesso capo (campo q) contano una volta sola, in ogni conteggio del sito */
+  const chiaveCapo = (p) => (p.q ? "q" + p.q : "h" + p.h);
   const perModello = new Map();
   P.forEach((p) => {
     if (!p.q) return;
@@ -95,10 +97,10 @@
     P.forEach((p) => {
       if (p.c === "gift-card" || !p.m) return;
       const k = slug(p.m);
-      if (!m.has(k)) m.set(k, { slug: k, nome: p.m, n: 0 });
-      m.get(k).n++;
+      if (!m.has(k)) m.set(k, { slug: k, nome: p.m, capi: new Set() });
+      m.get(k).capi.add(chiaveCapo(p));
     });
-    return Array.from(m.values());
+    return Array.from(m.values(), (x) => ({ slug: x.slug, nome: x.nome, n: x.capi.size }));
   })();
   const marcaDa = (s) => MARCHE.find((x) => x.slug === s);
 
@@ -333,7 +335,7 @@
   }
 
   /* ---------------------------------------------------- conteggi per menu */
-  const conta = (f) => P.reduce((n, p) => n + (f(p) ? 1 : 0), 0);
+  const conta = (f) => new Set(P.filter(f).map(chiaveCapo)).size;
   const categorieDi = (filtro, g) =>
     (C.categorie[g] || []).map(([c, nome]) => ({ c, nome, n: conta((p) => filtro(p) && p.g === g && p.c === c) })).filter((x) => x.n);
   const inSezione = {
@@ -345,9 +347,10 @@
     const m = new Map();
     P.forEach((p) => {
       if (!filtro(p) || !p.m) return;
-      m.set(p.m, (m.get(p.m) || 0) + 1);
+      if (!m.has(p.m)) m.set(p.m, new Set());
+      m.get(p.m).add(chiaveCapo(p));
     });
-    return Array.from(m.entries())
+    return Array.from(m.entries(), ([nome, capi]) => [nome, capi.size])
       .sort((a, b) => b[1] - a[1])
       .slice(0, quante)
       .map(([nome, n]) => ({ nome, slug: slug(nome), n }));
@@ -814,7 +817,7 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
     const visti = new Map();
     const out = [];
     lista.forEach((p) => {
-      const k = p.q ? "q" + p.q : "h" + p.h;
+      const k = chiaveCapo(p);
       if (visti.has(k)) return visti.get(k).push(p);
       const g = [p];
       visti.set(k, g);
@@ -926,7 +929,7 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
   };
   const tessera = (p, href, x) => {
     const [f, , indossata] = fotoScheda(p);
-    return `<a class="tessera" href="${href}"><span class="tessera__img"><img${indossata ? "" : ' class="is-ritaglio"'} src="${foto(f, 360)}" alt="" width="240" height="360" loading="lazy"></span><span class="tessera__t">${esc(x.nome)}</span><span class="tessera__n">${x.n} capi</span></a>`;
+    return `<a class="tessera" href="${href}"><span class="tessera__img"><img${indossata ? "" : ' class="is-ritaglio"'} src="${foto(f, 360)}" alt="" width="240" height="360" loading="lazy"></span><span class="tessera__t">${esc(x.nome)}</span><span class="tessera__n">${x.n === 1 ? "1 capo" : x.n + " capi"}</span></a>`;
   };
   const stelle = (n) => `<span class="stelle" role="img" aria-label="${n} stelle su 5">${[1, 2, 3, 4, 5].map((k) => `<svg class="ico${k <= n ? " on" : ""}" aria-hidden="true"><use href="#i-star"></use></svg>`).join("")}</span>`;
   /* recensioni in home: le prime sei, nell'ordine in cui arrivano (per data, non scelte); le altre con un tocco */
@@ -1417,7 +1420,7 @@ ${briciole(bc)}
       </div>
       <div class="griglia" data-griglia></div>
       <div class="elenco__piu" data-piu></div>
-      ${altroOutlet ? `<p class="elenco__altro">Anche in outlet: <a href="${hrefCat("outlet", c || "tutto", s)}">${altroOutlet} capi ${c === "tutto" ? s : nomeCategoria(s, c).toLowerCase() + " " + s} scontati</a></p>` : ""}
+      ${altroOutlet ? `<p class="elenco__altro">Anche in outlet: <a href="${hrefCat("outlet", c || "tutto", s)}">${altroOutlet === 1 ? "1 capo" : altroOutlet + " capi"} ${c === "tutto" ? s : nomeCategoria(s, c).toLowerCase() + " " + s} scontati</a></p>` : ""}
     </div>
   </div>
 </div>
