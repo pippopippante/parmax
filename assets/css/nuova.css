@@ -357,7 +357,9 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 
 /* casa: la foto del negozio a sinistra, il titolo su pietra chiara a destra e sotto la foto del 1985 */
 .apri--casa { display: grid; }
-.apri--casa .apri__foto { height: 46vh; min-height: 280px; overflow: hidden; background: var(--tile); }
+/* su telefono la foto si accorcia quanto serve perché Donna / Uomo / Outlet stiano nella prima schermata
+   (470 px circa è quello che occupano intestazione, titolo, frase e pulsanti); su tablet resta alta */
+.apri--casa .apri__foto { height: 46vh; height: clamp(180px, calc(100svh - 470px), 46vh); overflow: hidden; background: var(--tile); }
 .apri--casa .apri__foto img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
 .apri--casa .apri__t { background: var(--pietra); padding: 28px var(--gut) 32px; display: grid; gap: 32px; }
 .apri__testo { display: grid; gap: 18px; align-content: start; }
@@ -368,9 +370,14 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .apri__album img { width: clamp(130px, 16vw, 300px); filter: grayscale(1); }
 .apri__album figcaption { font-size: 14px; color: var(--ink-2); max-width: 30ch; }
 @media (min-width: 900px) {
-  .apri--casa { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); height: calc(100dvh - var(--hdr)); min-height: 600px; max-height: 1040px; }
-  .apri--casa .apri__foto { height: auto; }
-  .apri--casa .apri__t { padding: clamp(32px, 4.5vh, 64px) clamp(28px, 4vw, 72px); align-content: space-between; overflow: hidden; }
+  /* su computer l'apertura è alta quanto il suo testo, senza vuoti in mezzo, e lascia spuntare le Novità
+     in fondo alla prima schermata: chi entra vede subito che qui si vendono vestiti */
+  .apri--casa { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); min-height: min(540px, calc(100dvh - var(--hdr) - 180px)); }
+  .apri--casa .apri__foto { height: auto; position: relative; }
+  .apri--casa .apri__foto img { position: absolute; inset: 0; }
+  .apri--casa .apri__t { padding: clamp(32px, 4.5vh, 56px) clamp(28px, 4vw, 72px); align-content: center; gap: 28px; }
+  .apri--casa .apri__album img { width: clamp(130px, 12vw, 220px); }
+  .apri--casa + .rail { padding-top: 48px; }
 }
 
 /* rivista: la copertina. Due capi appena arrivati, indossati e interi, con la didascalia; accanto il titolo
