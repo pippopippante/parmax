@@ -953,11 +953,13 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
     return `<a class="tessera" href="${href}"><span class="tessera__img"><img${indossata ? "" : ' class="is-ritaglio"'} src="${foto(f, 360)}" alt="" width="240" height="360" loading="lazy"></span><span class="tessera__t">${esc(x.nome)}</span><span class="tessera__n">${x.n === 1 ? "1 capo" : x.n + " capi"}</span></a>`;
   };
   const stelle = (n) => `<span class="stelle" role="img" aria-label="${n} stelle su 5">${[1, 2, 3, 4, 5].map((k) => `<svg class="ico${k <= n ? " on" : ""}" aria-hidden="true"><use href="#i-star"></use></svg>`).join("")}</span>`;
-  /* recensioni in home: le prime sei, nell'ordine in cui arrivano (per data, non scelte); le altre con un tocco */
+  /* recensioni in home: le prime sei, nell'ordine in cui arrivano (per data, non scelte per voto); quelle col
+     solo voto vanno in fondo, così le prime sei si leggono. Le altre con un tocco */
   const REC_SUBITO = 6;
   function recensioniHtml() {
-    const rec = D.recensioni || { elenco: [] };
+    const rec = Object.assign({}, D.recensioni);
     if (!rec.elenco || !rec.elenco.length) return "";
+    rec.elenco = rec.elenco.filter((r) => r.testo).concat(rec.elenco.filter((r) => !r.testo));
     return `<section class="recensioni wrap" aria-labelledby="t-rec">
   <div class="recensioni__head">
     <h2 class="h2" id="t-rec">Dicono di noi</h2>
