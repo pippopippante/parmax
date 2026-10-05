@@ -523,9 +523,9 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .indice__col .h2 { padding-bottom: 14px; border-bottom: 1px solid var(--ink); margin-bottom: 8px; }
 .indice__col ul { columns: 2; column-gap: 20px; }
 .indice__col li { break-inside: avoid; }
-.indice__col a { display: block; min-height: 44px; padding: 10px 0 0; line-height: 1.35; text-decoration: none; font-size: 17px; font-weight: 300; }
+.indice__col li a { display: block; min-height: 44px; padding: 10px 0 0; line-height: 1.35; text-decoration: none; font-size: 17px; font-weight: 300; }
 .indice__col .n { margin-left: 6px; }
-.indice__col a:hover span:first-child { text-decoration: underline; }
+.indice__col li a:hover span:first-child { text-decoration: underline; }
 @media (min-width: 900px) { .indice { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(32px, 4vw, 72px); padding-top: 128px; } }
 
 /* negozi */
