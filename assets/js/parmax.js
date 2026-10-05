@@ -1146,7 +1146,12 @@ ${recensioniHtml()}`;
       return lista.length < 5
         ? ""
         : `<section class="serv serv--${verso} wrap" aria-labelledby="t-${g}">
-  <div class="serv__head"><h2 class="h1" id="t-${g}">${C.generi[g]}</h2><p class="serv__sub">Appena arrivati da ${elenca(Array.from(new Set(lista.map((p) => p.m))))}.</p><a class="link-freccia" href="elenco.html?s=${g}">Tutti i ${numero(tot[g])} capi ${ico("right")}</a></div>
+  <div class="serv__head"><h2 class="h1" id="t-${g}">${C.generi[g]}</h2><p class="serv__sub">Appena arrivati da ${elenca(Array.from(new Set(lista.map((p) => p.m))))}.</p><a class="link-freccia" href="elenco.html?s=${g}">Tutti i ${numero(tot[g])} capi ${ico("right")}</a>
+    <nav class="serv__cat" aria-label="Categorie ${C.generi[g]}"><ul>${categorieDi(inSezione[g], g)
+      .sort((a, b) => b.n - a.n)
+      .slice(0, 8)
+      .map((x) => voce(x.nome, hrefCat(g, x.c), x.n))
+      .join("")}</ul></nav></div>
   <div class="serv__g">${lista.map((p, i) => credito(p, i === 0)).join("")}</div>
 </section>`;
     };
