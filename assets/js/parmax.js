@@ -162,8 +162,24 @@
   }
   const ordinaTaglie = (a) => a.slice().sort((x, y) => pesoTaglia(x) - pesoTaglia(y));
   const taglieDi = (p) => ordinaTaglie(Array.from(new Set((p.v || []).map((v) => v[1]).filter(Boolean))));
-  /* le scarpe hanno numeri che si confondono con le taglie dei vestiti: chiavi separate nel filtro */
-  const chiaveTaglia = (p, z) => (p.c === "scarpe" ? "s:" : "a:") + z;
+  /* Nel filtro le taglie si dividono per tipo, ognuno col suo titolo (Baymard: mescolate non si capiscono).
+     Lo stesso numero cambia senso col capo: 42 è una taglia italiana, il collo di una camicia da uomo
+     o un numero di scarpa. Per questo la chiave ha davanti la lettera del gruppo. */
+  const GRUPPI_TAGLIA = [["l", "Lettere"], ["i", "Taglie italiane"], ["j", "Jeans (girovita)"], ["c", "Camicie (collo)"], ["s", "Scarpe"], ["b", "Bambini"], ["x", "Altre"]];
+  const PANTALONI = new Set(["jeans", "pantaloni", "bermuda"]);
+  function gruppoTaglia(p, z) {
+    const s = String(z || "").toUpperCase().trim();
+    if (p.c === "scarpe") return "s";
+    if (/^(X{0,3}[SL]|M|\dXL)([/-](X{0,3}[SL]|M|\dXL))?$/.test(s)) return "l";
+    if (/^\d+(\/\d+)?[AM]$/.test(s)) return "b";
+    if (p.c === "camicie" && p.g === "uomo" && /^\d/.test(s)) return "c";
+    const n = /^\d+$/.test(s) ? Number(s) : 0;
+    /* girovita: da 24 a 35 per la donna; per l'uomo fino a 42, le taglie italiane da uomo partono da 44 */
+    if (PANTALONI.has(p.c) && n >= 23 && n < (p.g === "uomo" ? 44 : 36)) return "j";
+    if (n >= 36 && n <= 60) return "i";
+    return "x";
+  }
+  const chiaveTaglia = (p, z) => gruppoTaglia(p, z) + ":" + z;
 
   /* ------------------------------------------------------------ carrello */
   /* Una riga per variante (taglia). Si salva quello che serve per mostrarla e ricalcolarne il prezzo;
@@ -852,6 +868,9 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
       : "";
     /* "is-ritaglio": il capo da solo su fondo bianco, che nella versione nuova si fonde col grigio del riquadro */
     const [f1, f2, indossata] = fotoScheda(p);
+    /* con una sola taglia del filtro disponibile, la scheda la apre già scelta */
+    const daFiltro = evid ? taglie.filter((z) => evid.has(chiaveTaglia(p, z))) : [];
+    const href = "prodotto.html?p=" + encodeURIComponent(p.h) + (daFiltro.length === 1 ? "&taglia=" + encodeURIComponent(daFiltro[0]) : "");
     return `
 <div class="card__media">
   <img class="card__img${indossata ? "" : " is-ritaglio"}" src="${foto(f1, 480)}" srcset="${srcset(f1, [240, 360, 480, 720])}" sizes="(min-width:1120px) 22vw, (min-width:760px) 30vw, 46vw" alt="${esc(alt)}" width="480" height="720" loading="${opz.subito ? "eager" : "lazy"}" decoding="async">
@@ -860,7 +879,7 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
 </div>
 <div class="card__b">
   <p class="card__m">${esc(p.m)}</p>
-  <h${lv} class="card__n"><a href="prodotto.html?p=${encodeURIComponent(p.h)}">${esc(nomeCapo(p))}<span class="sr">, ${esc(colorePrincipale(p))}</span></a></h${lv}>
+  <h${lv} class="card__n"><a href="${esc(href)}">${esc(nomeCapo(p))}<span class="sr">, ${esc(colorePrincipale(p))}</span></a></h${lv}>
   <p class="card__p">${prezzoHtml(p)}</p>
   ${tagl}
   ${altri}
@@ -1320,26 +1339,20 @@ ${recensioniHtml()}`;
     const gruppi = () => {
       const out = [];
       const nt = conteggi("t", (p) => (p.v || []).map((v) => chiaveTaglia(p, v[1])));
-      const ta = ordinaTaglie(Array.from(nt.keys()).filter((k) => k[0] === "a").map((k) => k.slice(2)));
-      const ts = ordinaTaglie(Array.from(nt.keys()).filter((k) => k[0] === "s").map((k) => k.slice(2)));
-      const taglieOpz = (pref, arr) => arr.map((z) => [pref + z, z, nt.get(pref + z)]);
-      /* lettere (XS-XL) e numeri (38-50, K-Way 5-8) in due gruppi: tutte insieme erano un mucchio */
-      const lettere = ta.filter((z) => !/^\d/.test(z));
-      const numeri = ta.filter((z) => /^\d/.test(z));
-      const sotto =
-        ta.length && ts.length
-          ? [["Abbigliamento e accessori", taglieOpz("a:", ta)], ["Scarpe", taglieOpz("s:", ts)]]
-          : lettere.length && numeri.length
-            ? [["Lettere", taglieOpz("a:", lettere)], ["Numeri", taglieOpz("a:", numeri)]]
-            : null;
-      if (ta.length || ts.length)
+      /* una taglia scelta resta in vista anche se con gli altri filtri non ha più capi */
+      F.t.forEach((k) => nt.has(k) || nt.set(k, 0));
+      const tipi = GRUPPI_TAGLIA.map(([g, nome]) => [
+        nome,
+        ordinaTaglie(Array.from(nt.keys()).filter((k) => k[0] === g).map((k) => k.slice(2))).map((z) => [g + ":" + z, z, nt.get(g + ":" + z)])
+      ]).filter((x) => x[1].length);
+      if (tipi.length)
         out.push({
           k: "t",
           nome: "Taglia",
           aperto: true,
           griglia: true,
-          sotto,
-          opz: sotto ? null : taglieOpz(ta.length ? "a:" : "s:", ta.length ? ta : ts)
+          sotto: tipi.length > 1 ? tipi : null,
+          opz: tipi.length > 1 ? null : tipi[0][1]
         });
       const nm = conteggi("mk", (p) => [slug(p.m)]);
       if (nm.size > 1 || F.mk.size)
@@ -1475,7 +1488,7 @@ ${briciole(bc)}
       gruppi().forEach((gr) => (gr.opz || gr.sotto.flatMap((x) => x[1])).forEach((o) => (nomi[gr.k + "|" + o[0]] = o[1])));
       const chip = [];
       ["t", "mk", "pr", "col", "cat", "gen"].forEach((k) =>
-        F[k].forEach((v) => chip.push(`<button type="button" class="chip chip--on" data-togli="${k}|${esc(v)}">${esc(nomi[k + "|" + v] || v.replace(/^[as]:/, ""))}${ico("close")}<span class="sr"> (togli il filtro)</span></button>`))
+        F[k].forEach((v) => chip.push(`<button type="button" class="chip chip--on" data-togli="${k}|${esc(v)}">${esc(nomi[k + "|" + v] || v.replace(/^[a-z]:/, ""))}${ico("close")}<span class="sr"> (togli il filtro)</span></button>`))
       );
       $("[data-attivi]").innerHTML = chip.length ? chip.join("") + `<button type="button" class="link-rimuovi" data-azzera>Azzera tutto</button>` : "";
 
@@ -1754,6 +1767,8 @@ ${briciole([["Home", "index.html"], [C.generi[s], ""]])}
     const disponibili = ordinate.filter((v) => v.disp);
     if (!ordinate.some((v) => String(v.id) === String(scelta.id) && v.disp)) scelta.id = "";
     if (!scelta.id && disponibili.length === 1 && ordinate.length === 1) scelta.id = String(disponibili[0].id);
+    /* la taglia scelta nel filtro dell'elenco (arriva nel link) */
+    if (!scelta.id && PARAM.get("taglia")) scelta.id = String((disponibili.find((v) => v.taglia === PARAM.get("taglia")) || {}).id || "");
     const esaurito = !disponibili.length;
     const unica = ordinate.length === 1 && /^(tu|taglia unica)$/i.test(ordinate[0].taglia || "");
     const vsel = ordinate.find((v) => String(v.id) === String(scelta.id));
