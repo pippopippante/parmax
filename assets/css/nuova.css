@@ -338,7 +338,7 @@ body[data-pagina="prodotto"] .toasts { bottom: 92px; }
 .rail__head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
 .rail__az { display: flex; align-items: center; gap: 16px; }
 .rail__frecce { display: none; }
-@media (hover: hover) and (pointer: fine) { .rail__frecce { display: flex; } .rail__frecce .iconbtn:disabled { opacity: 0.3; cursor: default; } }
+@media (hover: hover) and (pointer: fine) and (min-width: 760px) { .rail__frecce { display: flex; } .rail__frecce .iconbtn:disabled { opacity: 0.3; cursor: default; } }
 .rail__track {
   display: grid; grid-auto-flow: column; grid-auto-columns: 44%; gap: 10px;
   overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 14px;

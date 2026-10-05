@@ -901,11 +901,12 @@ ${ris.length ? `<a class="btn btn--primario cerca__tutti" href="elenco.html?q=${
   });
   let statoTaglie = () => null;
 
+  /* titolo arriva già pronto per l'HTML (lo passa per esc chi chiama): non si ripassa, se no "&" diventa "&amp;" */
   const rail = (titolo, href, gruppi, id, lv, opzCard) =>
     gruppi.length
       ? `<section class="rail wrap" aria-labelledby="${id}">
-  <div class="rail__head"><h2 class="h2" id="${id}">${titolo}</h2><div class="rail__az">${href ? `<a class="link-freccia" href="${href}">Vedi tutti ${ico("right")}</a>` : ""}<span class="rail__frecce"><button type="button" class="iconbtn" data-rail="-1" aria-label="${esc(titolo)}: indietro" disabled>${ico("left")}</button><button type="button" class="iconbtn" data-rail="1" aria-label="${esc(titolo)}: avanti">${ico("right")}</button></span></div></div>
-  <div class="rail__track" tabindex="0" role="region" aria-label="${esc(titolo)}, scorri di lato">${gruppi.map((g) => scheda(g, Object.assign({ lv: lv || 3 }, opzCard))).join("")}</div>
+  <div class="rail__head"><h2 class="h2" id="${id}">${titolo}</h2><div class="rail__az">${href ? `<a class="link-freccia" href="${href}">Vedi tutti ${ico("right")}</a>` : ""}<span class="rail__frecce"><button type="button" class="iconbtn" data-rail="-1" aria-label="${titolo}: indietro" disabled>${ico("left")}</button><button type="button" class="iconbtn" data-rail="1" aria-label="${titolo}: avanti">${ico("right")}</button></span></div></div>
+  <div class="rail__track" tabindex="0" role="region" aria-label="${titolo}, scorri di lato">${gruppi.map((g) => scheda(g, Object.assign({ lv: lv || 3 }, opzCard))).join("")}</div>
 </section>`
       : "";
   /* frecce delle strisce, solo col mouse (col dito si scorre): una pagina di schede intere per volta, spente agli estremi */
@@ -2098,6 +2099,7 @@ ${briciole(bc)}
     host.innerHTML =
       rail("Simili", m.c && m.g ? (m.o ? hrefCat("outlet", m.c, m.g) : hrefCat(m.g, m.c)) : "", simili, "t-sim") +
       rail("Altro di " + esc(m.m), "elenco.html?m=" + slug(m.m), marca, "t-marca");
+    $$(".rail__track", host).forEach(frecceRail);
   }
 
   /* ============================================================== MARCHE */
