@@ -1155,11 +1155,14 @@ ${recensioniHtml()}`;
   <span class="cred__t"><span class="cred__m">${esc(p.m)}</span><span class="cred__n">${esc(nomeCapo(p))}</span>${prezzoHtml(p)}</span>
 </a>`;
     const voce = (nome, href, n) => `<li><a href="${href}"><span>${esc(nome)}</span><span class="som__dot" aria-hidden="true"></span><span class="n">${n}</span></a></li>`;
-    const colonna = (g) => `<div class="som__col"><h2 class="som__g"><a href="elenco.html?s=${g}">${C.generi[g]}</a></h2><ul>${categorieDi(inSezione[g], g)
-      .sort((a, b) => b.n - a.n)
-      .slice(0, 5)
-      .map((x) => voce(x.nome, hrefCat(g, x.c), x.n))
-      .join("")}</ul></div>`;
+    /* le cinque categorie più grandi, poi un link alle altre: senza, Scarpe o Jeans sembravano mancare */
+    const colonna = (g) => {
+      const cat = categorieDi(inSezione[g], g).sort((a, b) => b.n - a.n);
+      return `<div class="som__col"><h2 class="som__g"><a href="elenco.html?s=${g}">${C.generi[g]}</a></h2><ul>${cat
+        .slice(0, 5)
+        .map((x) => voce(x.nome, hrefCat(g, x.c), x.n))
+        .join("")}${cat.length > 5 ? `<li><a class="som__piu" href="elenco.html?s=${g}"><span>Altre ${cat.length - 5} categorie</span>${ico("right")}</a></li>` : ""}</ul></div>`;
+    };
     /* "a, b e c" */
     const elenca = (l) => esc(l.length > 1 ? l.slice(0, -1).join(", ") + " e " + l[l.length - 1] : l[0] || "");
     const servizio = (g, verso) => {
